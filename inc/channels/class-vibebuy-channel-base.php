@@ -77,6 +77,7 @@ abstract class VibeBuy_Channel_Base {
 			return __( 'Hello, I want to inquire about your products.', 'vibebuy-order-connect-lite' );
 		}
 		return sprintf(
+			/* translators: 1: product name, 2: product price, 3: product url */
 			__( 'Hello! I want to order: %1$s - Price: %2$s - Link: %3$s', 'vibebuy-order-connect-lite' ),
 			$product['name'] ?? '',
 			$product['price'] ?? '',

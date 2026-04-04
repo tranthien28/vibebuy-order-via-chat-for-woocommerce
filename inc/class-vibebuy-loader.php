@@ -15,9 +15,6 @@ class VibeBuy_Loader {
 	 * Main Loader Init.
 	 */
 	public function init() {
-		// 0. Load Textdomain
-		load_plugin_textdomain( 'vibebuy-order-connect-lite', false, dirname( plugin_basename( __FILE__, 2 ) ) . '/languages' );
-
 		// 1. Load Core Components
 		require_once VIBEBUY_PLUGIN_DIR . 'inc/class-vibebuy-admin.php';
 		require_once VIBEBUY_PLUGIN_DIR . 'inc/class-vibebuy-api.php';

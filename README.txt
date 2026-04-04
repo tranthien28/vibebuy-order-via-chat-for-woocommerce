@@ -3,7 +3,7 @@ Contributors: tranthien28
 Tags: whatsapp, telegram, woocommerce, chat, checkout
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.0.1
+Stable tag: 1.0.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -28,6 +28,11 @@ Instead of utilizing legacy WordPress UI blocks, VibeBuy sets a new standard by 
 2. Live preview of the floating widget on the store frontend.
 
 == Changelog ==
+
+= 1.0.3 =
+* Fix: Address security and i18n issues reported in plugin scan.
+* Fix: Update database queries to use wpdb-&gt;prepare().
+* Fix: Ensure direct file access protection.
 
 = 1.0.1 =
 * Initial Lite release for WordPress.org.

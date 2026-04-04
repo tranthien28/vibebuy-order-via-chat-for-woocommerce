@@ -214,8 +214,17 @@ class VibeBuy_API {
 		}
 
 		global $wpdb;
-		$table_name = VibeBuy_DB::get_table_name();
-		$item = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ), ARRAY_A );
+		$table_name = esc_sql( VibeBuy_DB::get_table_name() );
+		$cache_key  = 'connection_detail_' . $id;
+		$item       = wp_cache_get( $cache_key, 'vibebuy' );
+
+		if ( false === $item ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared
+			$item = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $table_name . ' WHERE id = %d', $id ), ARRAY_A );
+			if ( $item ) {
+				wp_cache_set( $cache_key, $item, 'vibebuy', 3600 );
+			}
+		}
 
 		if ( ! $item ) {
 			return new WP_Error( 'not_found', __( 'Connection not found.', 'vibebuy-order-connect-lite' ), array( 'status' => 404 ) );

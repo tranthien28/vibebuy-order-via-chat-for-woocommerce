@@ -53,6 +53,7 @@ class VibeBuy_WPML {
 	public function rest_api_language_switch( $served, $result, $request, $server ) {
 		$lang = $request->get_param( 'lang' );
 		if ( $lang && function_exists( 'do_action' ) ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			do_action( 'wpml_switch_language', $lang );
 		}
 		return $served;

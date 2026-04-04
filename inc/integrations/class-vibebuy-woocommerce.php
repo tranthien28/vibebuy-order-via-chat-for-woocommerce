@@ -60,20 +60,22 @@ class VibeBuy_WooCommerce {
 				$min_price = floatval( $settings[ $channel_id . '_minPrice' ] ?? 0 );
 				$max_price = floatval( $settings[ $channel_id . '_maxPrice' ] ?? 0 );
 				
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 				global $product;
-				if ( ! is_object( $product ) ) {
-					$product = wc_get_product( get_the_ID() );
+				$_product = $product;
+				if ( ! is_object( $_product ) ) {
+					$_product = wc_get_product( get_the_ID() );
 				}
 				
-				if ( $product ) {
-					$price = floatval( $product->get_price() );
+				if ( $_product ) {
+					$price = floatval( $_product->get_price() );
 					if ( $min_price > 0 && $price < $min_price ) continue;
 					if ( $max_price > 0 && $price > $max_price ) continue;
 
 					// PRO Rule: Stock Status
 					$stock_condition = $settings[ $channel_id . '_stockStatus' ] ?? 'all';
-					if ( 'instock' === $stock_condition && ! $product->is_in_stock() ) continue;
-					if ( 'outofstock' === $stock_condition && $product->is_in_stock() ) continue;
+					if ( 'instock' === $stock_condition && ! $_product->is_in_stock() ) continue;
+					if ( 'outofstock' === $stock_condition && $_product->is_in_stock() ) continue;
 				}
 			}
 
@@ -142,19 +144,21 @@ class VibeBuy_WooCommerce {
 			return $data;
 		}
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		global $product;
-		if ( ! is_object( $product ) ) {
-			$product = wc_get_product( get_the_ID() );
+		$_product = $product;
+		if ( ! is_object( $_product ) ) {
+			$_product = wc_get_product( get_the_ID() );
 		}
 
-		if ( $product ) {
+		if ( $_product ) {
 			$data['product'] = array(
-				'id'        => $product->get_id(),
-				'name'      => $product->get_name(),
-				'price'     => $product->get_price(),
-				'sku'       => $product->get_sku(),
-				'url'       => get_permalink( $product->get_id() ),
-				'image'     => get_the_post_thumbnail_url( $product->get_id(), 'medium' ),
+				'id'        => $_product->get_id(),
+				'name'      => $_product->get_name(),
+				'price'     => $_product->get_price(),
+				'sku'       => $_product->get_sku(),
+				'url'       => get_permalink( $_product->get_id() ),
+				'image'     => get_the_post_thumbnail_url( $_product->get_id(), 'medium' ),
 				'currency'  => get_woocommerce_currency_symbol(),
 			);
 		}

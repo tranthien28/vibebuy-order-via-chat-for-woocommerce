@@ -67,12 +67,12 @@ class VibeBuy_Notices {
 		?>
 		<div class="notice notice-info is-dismissible" id="vibebuy-review-notice">
 			<p style="font-size: 14px; margin-bottom: 6px;">
-				<strong>💜 <?php echo esc_html( $this->config['plugin_name'] ); ?> - <?php _e( 'Rate our plugin', 'vibebuy-order-connect-lite' ); ?></strong>
+				<strong>💜 <?php echo esc_html( $this->config['plugin_name'] ); ?> - <?php esc_html_e( 'Rate our plugin', 'vibebuy-order-connect-lite' ); ?></strong>
 			</p>
 			<p style="margin-top: 0;">
-				<?php _e( 'We work very hard on our plugin to help you improve your website, so you can sell more. Please support us by leaving feedback for our plugin.', 'vibebuy-order-connect-lite' ); ?> 
+				<?php esc_html_e( 'We work very hard on our plugin to help you improve your website, so you can sell more. Please support us by leaving feedback for our plugin.', 'vibebuy-order-connect-lite' ); ?> 
 				<a href="<?php echo esc_url( $this->config['review_url'] ); ?>" target="_blank" style="font-weight: bold; text-decoration: underline;">
-					<?php _e( 'Write a review', 'vibebuy-order-connect-lite' ); ?>
+					<?php esc_html_e( 'Write a review', 'vibebuy-order-connect-lite' ); ?>
 				</a>
 			</p>
 		</div>
