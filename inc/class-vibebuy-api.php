@@ -99,6 +99,11 @@ class VibeBuy_API {
 		$settings['is_pro']         = vibebuy_is_pro();
 		$settings['license_key']    = get_option( 'vibebuy_license_key', '' );
 
+		// Enforce Lite limit: Only 1 active channel allowed
+		if ( ! $settings['is_pro'] && count( $settings['activeChannels'] ) > 1 ) {
+			$settings['activeChannels'] = array_slice( array_filter( $settings['activeChannels'] ), 0, 1 );
+		}
+
 		return rest_ensure_response( wp_parse_args( $settings, array_merge( $defaults, array(
 			'totalConnections' => 0,
 		) ) ) );
@@ -110,7 +115,12 @@ class VibeBuy_API {
 
 		// --- Global settings ---
 		if ( isset( $params['activeChannels'] ) && is_array( $params['activeChannels'] ) ) {
-			$settings['activeChannels'] = array_values( array_map( 'sanitize_text_field', $params['activeChannels'] ) );
+			$new_active = array_values( array_filter( array_map( 'sanitize_text_field', $params['activeChannels'] ) ) );
+			// Enforcement for Lite
+			if ( ! vibebuy_is_pro() && count( $new_active ) > 1 ) {
+				$new_active = array_slice( $new_active, 0, 1 );
+			}
+			$settings['activeChannels'] = $new_active;
 		}
 		if ( isset( $params['enabled'] ) ) {
 			$settings['enabled'] = rest_sanitize_boolean( $params['enabled'] );

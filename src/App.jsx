@@ -82,15 +82,6 @@ const Sidebar = ({ activeTab, onNavigate, onUpgrade, settings }) => (
       </button>
     </nav>
     <div className="vb-sidebar-bottom">
-      <div 
-        className={`vb-version-badge py-3 px-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 ${!settings.is_pro ? 'cursor-pointer hover:bg-gray-100 transition-all' : ''}`}
-        onClick={() => !settings.is_pro && onUpgrade()}
-      >
-        <span className="vb-version-dot" />
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-           System Status: <span className={settings.is_pro ? 'text-green-500' : 'text-gray-400'}>{settings.is_pro ? 'Optimal' : 'Standard'}</span>
-        </span>
-      </div>
       {!settings.is_pro && (
         <div className="vb-upgrade-box">
           <div className="vb-upgrade-box-icon"><Crown className="w-4 h-4" /></div>

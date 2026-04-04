@@ -150,10 +150,19 @@ class VibeBuy_Frontend {
 		}
 
 		// Localize data for the widget (settings, product context, etc.)
+		$settings           = get_option( 'vibebuy_lite_settings', array() );
+		$is_pro             = vibebuy_is_pro();
+		$settings['is_pro'] = $is_pro;
+
+		// Enforce Lite limit: Only 1 active channel allowed
+		if ( ! $is_pro && isset( $settings['activeChannels'] ) && is_array( $settings['activeChannels'] ) && count( $settings['activeChannels'] ) > 1 ) {
+			$settings['activeChannels'] = array_slice( array_filter( $settings['activeChannels'] ), 0, 1 );
+		}
+
 		$data = array(
 			'apiUrl'             => esc_url_raw( rest_url( 'vibebuy/v1/' ) ),
 			'nonce'              => wp_create_nonce( 'wp_rest' ),
-			'settings'           => get_option( 'vibebuy_lite_settings', array() ),
+			'settings'           => $settings,
 			'currentUser'        => $user_data,
 			'submittedInquiries' => VibeBuy_DB::get_user_submission_map( get_current_user_id() ),
 			'strings'            => array(
