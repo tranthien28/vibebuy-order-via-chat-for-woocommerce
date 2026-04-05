@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import {
   Save, Monitor, Smartphone, ArrowLeft, ChevronRight, ChevronLeft, Check,
   Lock, AlertCircle, LayoutDashboard, Settings, HelpCircle, Zap, BarChart3,
-  ExternalLink, Crown, MessageSquare, Shield
+  ExternalLink, MessageSquare, Shield, Share2, MousePointer2
 } from 'lucide-react';
 
 import { CHANNELS, getChannel } from './channels/registry.jsx';
@@ -83,8 +83,7 @@ const Sidebar = ({ activeTab, onNavigate, onUpgrade, settings }) => (
     </nav>
     <div className="vb-sidebar-bottom">
       {!settings.is_pro && (
-        <div className="vb-upgrade-box">
-          <div className="vb-upgrade-box-icon"><Crown className="w-4 h-4" /></div>
+        <div className="vb-upgrade-box text-center">
           <p className="vb-upgrade-title">Go Pro</p>
           <p className="vb-upgrade-desc">Unlock all channels & analytics</p>
           <button onClick={onUpgrade} className="vb-upgrade-btn">Upgrade Now <ExternalLink className="w-3 h-3" /></button>
@@ -168,7 +167,6 @@ const DashboardContent = ({ activeTab, settings, updateSetting, startConfig, han
                 <div className="vb-card vb-card--pro cursor-pointer group" onClick={onUpgrade}>
                   <div className="vb-card-pro-circle" />
                   <div className="relative z-10">
-                    <div className="vb-card-icon vb-card-icon--white group-hover:scale-110 transition-transform"><Crown className="w-4 h-4 text-white" /></div>
                     <p className="vb-card-label vb-card-label--white">Unlock All Features</p>
                     <p className="vb-card-value vb-card-value--white">GO PRO</p>
                   </div>
@@ -202,7 +200,18 @@ const DashboardContent = ({ activeTab, settings, updateSetting, startConfig, han
                             {isActive ? 'ACTIVE' : 'IN-ACTIVE'}
                           </span>
                         </div>
-                        <p className="vb-channel-desc">{ch.description}</p>
+                        <p className="vb-channel-desc">{ch.desc || ch.description}</p>
+                        <div className="flex gap-2 mt-1">
+                          {settings[`${ch.id}_show_as_shortcut`] ? (
+                            <span className="text-[9px] font-black bg-blue-50 text-blue-500 px-1.5 py-0.5 rounded border border-blue-100 flex items-center gap-1">
+                              <Share2 className="w-2.5 h-2.5" /> DIRECT SHORTCUT
+                            </span>
+                          ) : (
+                            <span className="text-[9px] font-black bg-green-50 text-green-500 px-1.5 py-0.5 rounded border border-green-100 flex items-center gap-1">
+                              <MousePointer2 className="w-2.5 h-2.5" /> LEAD INQUIRY
+                            </span>
+                          )}
+                        </div>
                       </div>
                       {(!ch.pro || settings.is_pro) ? (
                           <div className="flex gap-2">
@@ -466,6 +475,48 @@ const App = () => {
                         <p className="text-gray-400 text-sm">Loading Step...</p>
                       </div>
                     )}
+                  </div>
+
+                  {/* ─── Placement Settings Section (PRO Locked) ─── */}
+                  <div className={`vb-form-card mt-6 p-6 border-2 border-dashed transition-all ${!settings.is_pro ? 'border-gray-100 bg-gray-50/50 opacity-80 backdrop-blur-[1px]' : 'border-blue-100 bg-blue-50/20'}`}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Share2 className={`w-4 h-4 ${settings.is_pro ? 'text-blue-500' : 'text-gray-400'}`} />
+                        <h3 className="text-xs font-black uppercase text-gray-900 tracking-wider">Placement Setting</h3>
+                      </div>
+                      {!settings.is_pro && (
+                        <div className="flex items-center gap-1 bg-amber-400 text-white px-2 py-0.5 rounded text-[9px] font-black shadow-sm uppercase">
+                           PRO
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="text-sm font-bold text-gray-800">Show as Floating Shortcut</p>
+                          <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
+                            { (editChannel === 'tiktok' || editChannel === 'instagram') 
+                                ? 'TikTok and Instagram always use this mode to ensure compatibility.'
+                                : 'Enable this to show the icon as a secondary shortcut floating bar, skipping the lead form.'
+                            }
+                          </p>
+                        </div>
+                        <button 
+                          disabled={!settings.is_pro}
+                          onClick={() => updateSetting(`${editChannel}_show_as_shortcut`, !settings[`${editChannel}_show_as_shortcut`])}
+                          className={`vb-toggle ${ (settings[`${editChannel}_show_as_shortcut`] || editChannel === 'tiktok' || editChannel === 'instagram') ? 'vb-toggle--on' : 'vb-toggle--off'} ${!settings.is_pro ? 'grayscale opacity-50' : ''}`}
+                        >
+                          <div className={`vb-toggle-thumb ${ (settings[`${editChannel}_show_as_shortcut`] || editChannel === 'tiktok' || editChannel === 'instagram') ? 'vb-toggle-thumb--on' : 'vb-toggle-thumb--off'}`} />
+                        </button>
+                      </div>
+                      
+                      {!settings.is_pro && (
+                        <p className="text-[10px] text-amber-600 font-bold italic mt-2">
+                          * Upgrade to PRO to enable floating shortcuts and separate social icons from the main button.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

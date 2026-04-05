@@ -1,9 +1,9 @@
 import React from 'react';
-import { Check, Crown, Zap, BarChart3, MousePointer2, Sparkles } from 'lucide-react';
+import { Check, Zap, BarChart3, MousePointer2, Sparkles } from 'lucide-react';
 
 const BENEFITS = [
   { 
-    icon: <Crown className="w-4 h-4 text-amber-500" />, 
+    icon: <Sparkles className="w-4 h-4 text-amber-500" />, 
     title: '11+ Premium Channels', 
     desc: 'Unlock Zalo, Messenger, TikTok, Instagram, and more.' 
   },
@@ -33,7 +33,7 @@ const BenefitList = () => {
   return (
     <div className="vb-benefit-list">
       <div className="flex items-center gap-2 mb-3">
-        <Crown className="w-5 h-5 text-amber-500 fill-amber-500" />
+        <Sparkles className="w-5 h-5 text-amber-500 fill-amber-500" />
         <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">Pro Features</h3>
       </div>
       

@@ -21,6 +21,7 @@ const whatsapp = {
     bgColor: '#25D366',
     textColor: '#ffffff',
     borderRadius: 50,
+    show_as_shortcut: false,
   },
 
   // Step 1 component — channel-specific

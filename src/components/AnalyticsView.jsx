@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, MousePointer2, ShoppingBag, Globe, Share2, Crown, ChevronRight, Zap } from 'lucide-react';
+import { BarChart3, TrendingUp, MousePointer2, ShoppingBag, Globe, Share2, ChevronRight, Zap } from 'lucide-react';
 
 const AnalyticsView = ({ settings }) => {
   const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ const AnalyticsView = ({ settings }) => {
         
         <div className="relative p-12 text-center flex flex-col items-center">
           <div className="w-24 h-24 rounded-[40px] bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-2xl shadow-amber-200 mb-8 animate-bounce transition-transform">
-             <Crown className="w-12 h-12" />
+             <span className="text-[9px] font-black bg-amber-400 text-white px-1.5 py-0.5 rounded shadow-sm">PRO</span>
           </div>
           
           <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">
@@ -106,7 +106,7 @@ const AnalyticsView = ({ settings }) => {
               <h2 className="vb-section-title">Most Popular Products</h2>
               <p className="vb-section-subtitle">Items capturing the most customer interest.</p>
             </div>
-            <Crown className="w-5 h-5 text-amber-500 animate-bounce" />
+            <span className="text-[9px] font-black bg-amber-400 text-white px-1.5 py-0.5 rounded shadow-sm">PRO</span>
           </div>
           <div className="p-4 space-y-2">
             {data.top_products.length > 0 ? data.top_products.map((p, i) => (

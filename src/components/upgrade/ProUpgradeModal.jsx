@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Crown, Shield, ArrowRight, ExternalLink } from 'lucide-react';
+import { X, Shield, ArrowRight, ExternalLink } from 'lucide-react';
 import BenefitList from './BenefitList.jsx';
 import PricingTable from './PricingTable.jsx';
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Send, Hash, MessageSquare, ChevronRight, 
   ExternalLink, CheckCircle2, 
-  AlertCircle, Lock, Layout
+  AlertCircle, Lock, Layout, Palette, Target
 } from 'lucide-react';
 
 const HelpView = ({ onNavigate, initialSection }) => {
@@ -66,7 +66,7 @@ const HelpView = ({ onNavigate, initialSection }) => {
                   <div className="w-full h-48 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 border border-dashed border-gray-200">
                     <Palette className="w-8 h-8 text-blue-200" />
                   </div>
-                  <p className="text-sm text-gray-500">Customize layouts, colors, and button positions to match your branding perfectly.</p>
+                  <p className="text-sm text-gray-500">Customize Layout, Palette, Targets, colors, and button positions to match your branding perfectly.</p>
                </div>
                <div className="group border-b border-gray-100 pb-8 last:border-0">
                   <div className="flex items-center gap-3 mb-4">
@@ -217,7 +217,7 @@ const HelpView = ({ onNavigate, initialSection }) => {
               <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
                 <p className="text-xs text-amber-800 italic">
-                  <b>Pro Tip:</b> You can rearrange the layout, but do not remove these IDs or the modal logic will break. 
+                  <b>Pro Tip:</b> You can rearrange the Layout, Palette, Target, but do not remove these IDs or the modal logic will break. 
                   The modal uses <b>Tailwind CSS</b> for styling.
                 </p>
               </div>

@@ -91,6 +91,8 @@ class VibeBuy_API {
 			'orderModal_enabled'      => true,
 			'orderModal_autoFill'     => true,
 			'orderModal_autoOff'      => true,
+			'floatingSocial_enabled'  => false,
+			'floatingSocial_position' => 'bottom-right',
 		);
 		$settings                     = get_option( 'vibebuy_lite_settings', array() );
 		$settings['totalConnections'] = VibeBuy_DB::get_total_connections_count();
@@ -138,6 +140,12 @@ class VibeBuy_API {
 		}
 		if ( isset( $params['orderModal_autoOff'] ) ) {
 			$settings['orderModal_autoOff'] = rest_sanitize_boolean( $params['orderModal_autoOff'] );
+		}
+		if ( isset( $params['floatingSocial_enabled'] ) ) {
+			$settings['floatingSocial_enabled'] = rest_sanitize_boolean( $params['floatingSocial_enabled'] );
+		}
+		if ( isset( $params['floatingSocial_position'] ) ) {
+			$settings['floatingSocial_position'] = sanitize_text_field( $params['floatingSocial_position'] );
 		}
 
 		// --- Channel-specific settings (dynamic via registry) ---
@@ -230,7 +238,7 @@ class VibeBuy_API {
 
 		if ( false === $item ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared
-			$item = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $table_name . ' WHERE id = %d', $id ), ARRAY_A );
+			$item = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM %i WHERE id = %d", $table_name, $id ), ARRAY_A );
 			if ( $item ) {
 				wp_cache_set( $cache_key, $item, 'vibebuy', 3600 );
 			}

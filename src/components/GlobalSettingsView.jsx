@@ -254,6 +254,62 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
               </div>
             </section>
 
+            {/* 2.5 Shortcut Bar Positioning (PRO) */}
+            <section className={`space-y-6 p-6 rounded-3xl border border-dashed transition-all ${!settings.is_pro ? 'border-gray-200 bg-gray-50/30' : 'border-blue-100 bg-blue-50/10'}`}>
+               <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Share2 className={`w-4 h-4 ${settings.is_pro ? 'text-blue-500' : 'text-gray-400'}`} />
+                  <h3 className={`text-xs font-black uppercase tracking-widest ${settings.is_pro ? 'text-gray-900' : 'text-gray-500'}`}>
+                    Social Shortcut Bar {settings.is_pro ? '' : '(PRO)'}
+                  </h3>
+                </div>
+                {!settings.is_pro && (
+                  <span className="bg-amber-400 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase">PRO</span>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-gray-800">Enable Shortcut Bar</p>
+                    <p className="text-[11px] text-gray-500">Show secondary floating icons for direct social links.</p>
+                  </div>
+                  <button 
+                    disabled={!settings.is_pro}
+                    onClick={() => updateSetting('floatingSocial_enabled', !settings.floatingSocial_enabled)} 
+                    className={`vb-toggle ${settings.floatingSocial_enabled ? 'vb-toggle--on' : 'vb-toggle--off'} ${!settings.is_pro ? 'grayscale opacity-50' : ''}`}
+                  >
+                    <div className={`vb-toggle-thumb ${settings.floatingSocial_enabled ? 'vb-toggle-thumb--on' : 'vb-toggle-thumb--off'}`} />
+                  </button>
+                </div>
+
+                <div className={!settings.is_pro ? 'opacity-50 pointer-events-none' : ''}>
+                  <label className={labelClass}>Shortcut Bar Position</label>
+                  <div className="flex gap-2">
+                    {[
+                      { id: 'bottom-right', label: 'Bottom Right' },
+                      { id: 'bottom-left', label: 'Bottom Left' }
+                    ].map(pos => (
+                      <button
+                        key={pos.id}
+                        type="button"
+                        onClick={() => updateSetting('floatingSocial_position', pos.id)}
+                        className={`flex-1 py-1.5 px-3 rounded-lg border text-[10px] font-black uppercase transition-all ${(settings.floatingSocial_position || 'bottom-right') === pos.id ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'bg-white border-gray-200 text-gray-400 hover:border-gray-300'}`}
+                      >
+                        {pos.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                {!settings.is_pro && (
+                  <p className="text-[10px] text-blue-500 font-bold italic mt-2">
+                    * Floating shortcut icons for TikTok, Instagram, and more are exclusive to the PRO version.
+                  </p>
+                )}
+              </div>
+            </section>
+
             {/* 3. Order Modal & Form Logic */}
             <section className="space-y-6">
               <div className="pb-2 border-b border-gray-50">

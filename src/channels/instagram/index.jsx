@@ -16,6 +16,7 @@ const instagram = {
     bgColor: '#E1306C',
     textColor: '#ffffff',
     borderRadius: 50,
+    show_as_shortcut: true,
   },
 
   ConfigStep,

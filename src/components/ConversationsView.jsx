@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronLeft, ChevronRight, MessageCircle, User, Mail, Calendar, ExternalLink, Crown, ShoppingCart, Download, Lock } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, MessageCircle, User, Mail, Calendar, ExternalLink, ShoppingCart, Download, Lock } from 'lucide-react';
 
 const ConversationsView = ({ onViewDetail, settings }) => {
   const [connections, setConnections] = useState([]);
@@ -95,7 +95,7 @@ const ConversationsView = ({ onViewDetail, settings }) => {
                <>
                  <div className="absolute top-0 right-0 py-0.5 px-1.5 bg-amber-400 text-white text-[7px] font-black uppercase rounded-bl shadow-sm">PRO</div>
                  <div className="absolute bottom-full mb-3 right-0 bg-gray-900 text-white text-[10px] px-3 py-1.5 rounded-lg opacity-0 group-hover/export:opacity-100 whitespace-nowrap pointer-events-none transition-all scale-95 group-hover/export:scale-100 shadow-xl border border-gray-800 z-50">
-                   <Crown className="w-3.5 h-3.5 inline mr-1 text-amber-400" /> CSV/Excel Export (PRO)
+                   <Lock className="w-3.5 h-3.5 inline mr-1 text-amber-400" /> CSV/Excel Export (PRO)
                  </div>
                </>
              )}
@@ -190,7 +190,7 @@ const ConversationsView = ({ onViewDetail, settings }) => {
                       <button className="p-2.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all group/btn relative">
                         <ShoppingCart className="w-4 h-4" />
                         <span className="absolute bottom-full mb-3 right-0 bg-gray-900 text-white text-[10px] px-3 py-1.5 rounded-lg opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-all scale-95 group-hover/btn:scale-100 shadow-xl border border-gray-800">
-                          <Crown className="w-3.5 h-3.5 inline mr-1 text-amber-400" /> Create Order (PRO)
+                          <Lock className="w-3.5 h-3.5 inline mr-1 text-amber-400" /> Create Order (PRO)
                         </span>
                       </button>
                     </div>

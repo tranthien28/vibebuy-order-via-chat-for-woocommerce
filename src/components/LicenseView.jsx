@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Key, CheckCircle2, AlertCircle, Loader2, Sparkles, Crown } from 'lucide-react';
+import { Shield, Key, CheckCircle2, AlertCircle, Loader2, Sparkles } from 'lucide-react';
 
 const LicenseView = ({ settings, onUpdateSettings, onToast }) => {
   const [key, setKey] = useState(settings.license_key || '');

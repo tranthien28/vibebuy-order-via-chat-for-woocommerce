@@ -16,6 +16,7 @@ const tiktok = {
     bgColor: '#000000',
     textColor: '#ffffff',
     borderRadius: 50,
+    show_as_shortcut: true,
   },
 
   ConfigStep,

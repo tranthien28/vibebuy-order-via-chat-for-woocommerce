@@ -27,7 +27,22 @@ const getChannelLink = (channelId, settings, product, manualData) => {
   } else if (channelId === 'messenger') {
     const id = settings.messenger_id;
     return `https://m.me/${id}`;
+  } else if (channelId === 'tiktok') {
+    const user = settings.tiktok_username;
+    return user ? `https://www.tiktok.com/@${user.replace('@', '')}` : '#';
+  } else if (channelId === 'instagram') {
+    const user = settings.instagram_username;
+    return user ? `https://instagram.com/${user.replace('@', '')}` : '#';
+  } else if (channelId === 'line') {
+    const id = settings.line_id;
+    return id ? `https://line.me/R/ti/p/~${id}` : '#';
+  } else if (channelId === 'viber') {
+    const number = settings.viber_number;
+    return number ? `viber://chat?number=${number}` : '#';
+  } else if (channelId === 'custom') {
+    return settings.custom_url || '#';
   }
+
   return '#';
 };
 
@@ -123,14 +138,75 @@ const useOrderFlow = (settings, channelId, product, manualData) => {
 
   const handleModalClose = (proceedToChat) => {
     setIsModalOpen(false);
-    // User Instructions: Only WhatsApp Lite needs a redirect after modal submission
-    if (proceedToChat && channelId === 'whatsapp') {
-      const link = getChannelLink(channelId, settings, product, manualData);
-      if (link !== '#') window.open(link, '_blank');
+    
+    if (!proceedToChat) return;
+
+    // Omnichannel (Pro) logic: 
+    // If it's a global lead button, find the best channel to redirect to
+    if (channelId === 'global' || channelId === 'whatsapp' || channelId === 'zalo' || channelId === 'messenger') {
+      const activeChannels = settings.activeChannels || [];
+      
+      // Determine which channel to open
+      let targetId = channelId;
+      if (targetId === 'global') {
+        // Priority: whatsapp > zalo > messenger > others
+        targetId = activeChannels.find(id => id === 'whatsapp')
+                || activeChannels.find(id => id === 'zalo')
+                || activeChannels.find(id => id === 'messenger')
+                || activeChannels[0];
+      }
+
+      if (targetId) {
+        const link = getChannelLink(targetId, settings, product, manualData);
+        if (link !== '#') window.open(link, '_blank');
+      }
     }
   };
 
   return { isModalOpen, triggerAction, handleModalSubmit, handleModalClose, hasSubmitted };
+};
+
+const SocialShortcutBar = ({ settings, channels, position, productData }) => {
+  if (!channels || channels.length === 0) return null;
+
+  const isLeft = position === 'bottom-left';
+  
+  return (
+    <div 
+      className={`fixed z-[9998] flex flex-col gap-3 transition-all duration-300 ${isLeft ? 'bottom-24 left-6 slide-in-from-left-4' : 'bottom-24 right-6 slide-in-from-right-4'}`}
+    >
+      {channels.map(id => {
+        const ch = window.vibebuyWidgetData?.channels?.find(c => c.id === id);
+        if (!ch) return null;
+        
+        const link = getChannelLink(id, settings, productData);
+        if (link === '#') return null;
+
+        return (
+          <a
+            key={id}
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackEvent('click_shortcut', id, productData?.id || 0)}
+            className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all text-white border-2 border-white"
+            style={{ backgroundColor: ch.colorHex || '#1e293b' }}
+            title={ch.name}
+          >
+             {settings[`${id}_iconUrl`] ? (
+               <img src={settings[`${id}_iconUrl`]} alt={ch.name} className="w-5 h-5 object-cover rounded-full" />
+             ) : (
+                <div className="w-5 h-5 flex items-center justify-center scale-90">
+                  {/* We use a static mapping or just the icon from the ch object if available */}
+                  <img src={window.vibebuyWidgetData?.assetsUrl + 'icons/' + id + '.svg'} alt={id} className="w-5 h-5 invert brightness-0" 
+                       onError={(e) => { e.target.style.display = 'none'; }} />
+                </div>
+             )}
+          </a>
+        );
+      })}
+    </div>
+  );
 };
 
 const LeadButton = ({ settings, productData, manualData }) => {
@@ -210,32 +286,54 @@ const InlineChatButtons = ({ settings, productData, manualData }) => {
 const FloatingBubble = ({ settings, productData }) => {
   const { isModalOpen, triggerAction, handleModalSubmit, handleModalClose, hasSubmitted } = useOrderFlow(settings, 'global', productData, null);
 
+  const activeChannels = settings.activeChannels || [];
+  const shortcutChannels = activeChannels.filter(id => settings[`${id}_show_as_shortcut`] || id === 'tiktok' || id === 'instagram');
+  const leadChannels = activeChannels.filter(id => !shortcutChannels.includes(id));
+
+  const showShortcutBar = settings.floatingSocial_enabled && shortcutChannels.length > 0;
+  const showMainBubble = leadChannels.length > 0 || !showShortcutBar; // Always show bubble if no shortcuts
+
   const customBgColor = settings.backgroundColor || '#22c55e';
   const customRadius = settings.borderRadius !== undefined ? `${settings.borderRadius}px` : '999px';
   const hasText = settings.buttonText && settings.buttonText.trim() !== '';
+  const position = settings.floatingSocial_position || 'bottom-right';
+  const isLeft = position === 'bottom-left';
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end font-sans">
-        <div 
-          className={`flex items-center justify-center shadow-xl cursor-pointer transform hover:scale-105 transition-all text-white ${hasText ? 'px-5 py-3 gap-3' : 'w-14 h-14'}`}
-          style={{ 
-            backgroundColor: customBgColor,
-            borderRadius: customRadius,
-          }}
-          onClick={(e) => triggerAction(e)}
-        >
-           {settings.buttonIconUrl ? (
-              <img src={settings.buttonIconUrl} alt="Custom Agent Avatar" className="w-6 h-6 object-cover rounded-full shadow-sm" />
-           ) : (
-              <MessageCircle className="w-6 h-6 fill-current" />
-           )}
+      {showShortcutBar && (
+        <SocialShortcutBar 
+          settings={settings} 
+          channels={shortcutChannels} 
+          position={position}
+          productData={productData}
+        />
+      )}
 
-           {hasText && (
-              <span className="font-bold whitespace-nowrap">{settings.buttonText}</span>
-           )}
+      {showMainBubble && (
+        <div 
+          className={`fixed bottom-6 z-[9999] flex flex-col items-end font-sans transition-all duration-300 ${isLeft ? 'left-6' : 'right-6'}`}
+        >
+          <div 
+            className={`flex items-center justify-center shadow-xl cursor-pointer transform hover:scale-105 transition-all text-white ${hasText ? 'px-5 py-3 gap-3' : 'w-14 h-14'}`}
+            style={{ 
+              backgroundColor: customBgColor,
+              borderRadius: customRadius,
+            }}
+            onClick={(e) => triggerAction(e)}
+          >
+             {settings.buttonIconUrl ? (
+                <img src={settings.buttonIconUrl} alt="Custom Agent Avatar" className="w-6 h-6 object-cover rounded-full shadow-sm" />
+             ) : (
+                <MessageCircle className="w-6 h-6 fill-current" />
+             )}
+
+             {hasText && (
+                <span className="font-bold whitespace-nowrap">{settings.buttonText}</span>
+             )}
+          </div>
         </div>
-      </div>
+      )}
 
       <OrderModal 
         isOpen={isModalOpen}
