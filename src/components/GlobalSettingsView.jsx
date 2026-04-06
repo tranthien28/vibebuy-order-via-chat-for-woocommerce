@@ -283,7 +283,7 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                   </button>
                 </div>
 
-                <div className={!settings.is_pro ? 'opacity-50 pointer-events-none' : ''}>
+                <div className={`transition-all duration-300 ${(!settings.is_pro || !settings.floatingSocial_enabled) ? 'opacity-30 pointer-events-none' : ''}`}>
                   <label className={labelClass}>Shortcut Bar Position</label>
                   <div className="flex gap-2">
                     {[
@@ -327,43 +327,63 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">Auto-fill Customer Profile</p>
-                    <p className="text-[11px] text-gray-500">Automatically predict names and emails for logged-in WP users.</p>
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 transition-all duration-300 ${settings.orderModal_enabled === false ? 'opacity-40 pointer-events-none' : ''}`}>
+                  <div className="flex items-center justify-between p-3 bg-gray-50/50 rounded-xl border border-gray-100">
+                    <div>
+                      <p className="text-[11px] font-bold text-gray-900 uppercase">Auto-fill Profile</p>
+                      <p className="text-[9px] text-gray-400 font-medium">Predict names & emails</p>
+                    </div>
+                    <button onClick={() => updateSetting('orderModal_autoFill', settings.orderModal_autoFill === undefined ? true : !settings.orderModal_autoFill)} className={`vb-toggle-sm ${settings.orderModal_autoFill !== false ? 'vb-toggle--on' : 'vb-toggle--off'}`}>
+                      <div className="vb-toggle-thumb-sm" />
+                    </button>
                   </div>
-                  <button onClick={() => updateSetting('orderModal_autoFill', settings.orderModal_autoFill === undefined ? true : !settings.orderModal_autoFill)} className={`vb-toggle ${settings.orderModal_autoFill !== false ? 'vb-toggle--on' : 'vb-toggle--off'}`}>
-                    <div className={`vb-toggle-thumb ${settings.orderModal_autoFill !== false ? 'vb-toggle-thumb--on' : 'vb-toggle-thumb--off'}`} />
-                  </button>
-                </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">Prevent Duplicate Submissions</p>
-                    <p className="text-[11px] text-gray-500">Skip the form entirely and go straight to chat if already submitted.</p>
+                  <div className="flex items-center justify-between p-3 bg-gray-50/50 rounded-xl border border-gray-100">
+                    <div>
+                      <p className="text-[11px] font-bold text-gray-900 uppercase">Skip if repeat</p>
+                      <p className="text-[9px] text-gray-400 font-medium">Auto-open chat direct</p>
+                    </div>
+                    <button onClick={() => updateSetting('orderModal_autoOff', settings.orderModal_autoOff === undefined ? true : !settings.orderModal_autoOff)} className={`vb-toggle-sm ${settings.orderModal_autoOff !== false ? 'vb-toggle--on' : 'vb-toggle--off'}`}>
+                      <div className="vb-toggle-thumb-sm" />
+                    </button>
                   </div>
-                  <button onClick={() => updateSetting('orderModal_autoOff', settings.orderModal_autoOff === undefined ? true : !settings.orderModal_autoOff)} className={`vb-toggle ${settings.orderModal_autoOff !== false ? 'vb-toggle--on' : 'vb-toggle--off'}`}>
-                    <div className={`vb-toggle-thumb ${settings.orderModal_autoOff !== false ? 'vb-toggle-thumb--on' : 'vb-toggle-thumb--off'}`} />
-                  </button>
                 </div>
 
                 {/* PRO Success Action */}
-                <div className={`p-4 rounded-2xl border border-dashed transition-all ${!settings.is_pro
-                  ? 'border-gray-200 bg-white opacity-60 grayscale cursor-not-allowed'
-                  : 'border-blue-100 bg-blue-50/30'
-                  } relative overflow-hidden`}>
+                <div className={`p-4 rounded-2xl border border-dashed transition-all duration-300 ${!settings.is_pro ? 'border-gray-200 bg-white opacity-40 grayscale cursor-not-allowed' : 'border-blue-100 bg-blue-50/30'} ${settings.orderModal_enabled === false ? 'opacity-40 pointer-events-none grayscale' : ''} relative`}>
                   {!settings.is_pro && <div className="absolute top-2 right-2 bg-amber-400 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm">PRO</div>}
                   <p className="text-[11px] font-black text-gray-900 uppercase tracking-widest mb-3">After Submission Action</p>
                   <div className="flex gap-2">
-                    <div className={`flex-1 p-2.5 rounded-xl flex items-center gap-2 ${settings.is_pro ? 'bg-white border border-blue-200 shadow-sm' : 'bg-blue-50 border border-blue-100'}`}>
-                      <CheckCircle className={`w-3 h-3 ${settings.is_pro ? 'text-green-500' : 'text-blue-500'}`} />
-                      <span className={`text-[10px] font-bold ${settings.is_pro ? 'text-gray-700' : 'text-blue-700'}`}>Show Thank You Message</span>
-                    </div>
-                    <div className={`flex-1 p-2.5 rounded-xl flex items-center gap-2 ${settings.is_pro ? 'bg-white border border-gray-200' : 'bg-gray-50 border border-gray-100'}`}>
-                      <ExternalLink className={`w-3 h-3 ${settings.is_pro ? 'text-blue-500' : 'text-gray-400'}`} />
-                      <span className={`text-[10px] font-bold ${settings.is_pro ? 'text-gray-700' : 'text-gray-400'}`}>Redirect to URL</span>
-                    </div>
+                    <button 
+                      disabled={!settings.is_pro}
+                      onClick={() => updateSetting('after_submission_action', 'thank_you')}
+                      className={`flex-1 p-2.5 rounded-xl flex items-center justify-center gap-2 border transition-all ${(settings.after_submission_action || 'thank_you') === 'thank_you' ? 'bg-white border-blue-200 shadow-sm' : 'bg-transparent border-gray-100 opacity-60'}`}
+                    >
+                      <CheckCircle className={`w-3.5 h-3.5 ${(settings.after_submission_action || 'thank_you') === 'thank_you' ? 'text-green-500' : 'text-gray-300'}`} />
+                      <span className={`text-[10px] font-black uppercase ${(settings.after_submission_action || 'thank_you') === 'thank_you' ? 'text-gray-900' : 'text-gray-400'}`}>Thank You Msg</span>
+                    </button>
+                    <button 
+                      disabled={!settings.is_pro}
+                      onClick={() => updateSetting('after_submission_action', 'redirect')}
+                      className={`flex-1 p-2.5 rounded-xl flex items-center justify-center gap-2 border transition-all ${settings.after_submission_action === 'redirect' ? 'bg-white border-blue-200 shadow-sm' : 'bg-transparent border-gray-100 opacity-60'}`}
+                    >
+                      <ExternalLink className={`w-3.5 h-3.5 ${settings.after_submission_action === 'redirect' ? 'text-blue-500' : 'text-gray-300'}`} />
+                      <span className={`text-[10px] font-black uppercase ${settings.after_submission_action === 'redirect' ? 'text-gray-900' : 'text-gray-400'}`}>Redirect to URL</span>
+                    </button>
                   </div>
+
+                  {settings.after_submission_action === 'redirect' && settings.is_pro && (
+                    <div className="mt-4 animate-in slide-in-from-top-2 duration-300">
+                      <label className={labelClass}>Redirect Target URL</label>
+                      <input 
+                        type="url"
+                        placeholder="https://yourstore.com/thank-you"
+                        value={settings.after_submission_redirect_url || ''}
+                        onChange={(e) => updateSetting('after_submission_redirect_url', e.target.value)}
+                        className={inputClass}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </section>
@@ -393,7 +413,7 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                   </button>
                 </div>
 
-                <div className={`pt-4 border-t border-gray-100 ${!settings.is_pro ? 'opacity-60 grayscale' : ''} relative`}>
+                <div className={`pt-4 border-t border-gray-100 transition-all duration-300 ${(!settings.is_pro || settings.order_creation_enabled === false) ? 'opacity-40 pointer-events-none' : ''} relative`}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-1.5">
                       <label className={labelClass}>Default Order Status</label>
@@ -515,15 +535,17 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                 </h3>
               </div>
 
-              <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-all ${!settings.is_pro ? 'opacity-60 grayscale cursor-not-allowed pointer-events-none' : ''}`}>
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-all ${!settings.is_pro ? 'opacity-40 grayscale cursor-not-allowed pointer-events-none' : ''}`}>
                 {/* LEFT: Devices & Time */}
                 <div className="space-y-6">
-                  <div className="space-y-3">
-                    <label className={labelClass}>Device & Platforms</label>
-                    <div className="flex gap-2">
-                      <div className={`flex-1 flex items-center justify-between p-2 bg-white rounded-lg border ${settings.hide_on_mobile ? 'border-red-200 bg-red-50' : 'border-gray-200'}`}>
-                        <Smartphone className={`w-3.5 h-3.5 ${settings.hide_on_mobile ? 'text-red-500' : 'text-gray-400'}`} />
-                        <span className="text-[10px] font-bold text-gray-700">Hide on Mobile</span>
+                  <div className="space-y-4">
+                    <label className={labelClass}>Device & Platforms Targeting</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className={`flex items-center justify-between p-2 bg-white rounded-lg border transition-all ${settings.hide_on_mobile ? 'border-red-200 bg-red-50' : 'border-gray-200'}`}>
+                        <div className="flex items-center gap-2">
+                           <Smartphone className={`w-3.5 h-3.5 ${settings.hide_on_mobile ? 'text-red-500' : 'text-gray-400'}`} />
+                           <span className="text-[10px] font-bold text-gray-700 leading-none">Hide on Mobile</span>
+                        </div>
                         <button
                           disabled={!settings.is_pro}
                           onClick={() => updateSetting('hide_on_mobile', !settings.hide_on_mobile)}
@@ -532,9 +554,11 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                           <div className="vb-toggle-thumb-sm" />
                         </button>
                       </div>
-                      <div className={`flex-1 flex items-center justify-between p-2 bg-white rounded-lg border ${settings.hide_on_desktop ? 'border-red-200 bg-red-50' : 'border-gray-200'}`}>
-                        <Monitor className={`w-3.5 h-3.5 ${settings.hide_on_desktop ? 'text-red-500' : 'text-gray-400'}`} />
-                        <span className="text-[10px] font-bold text-gray-700">Hide on Desktop</span>
+                      <div className={`flex items-center justify-between p-2 bg-white rounded-lg border transition-all ${settings.hide_on_desktop ? 'border-red-200 bg-red-50' : 'border-gray-200'}`}>
+                        <div className="flex items-center gap-2">
+                           <Monitor className={`w-3.5 h-3.5 ${settings.hide_on_desktop ? 'text-red-500' : 'text-gray-400'}`} />
+                           <span className="text-[10px] font-bold text-gray-700 leading-none">Hide on Desktop</span>
+                        </div>
                         <button
                           disabled={!settings.is_pro}
                           onClick={() => updateSetting('hide_on_desktop', !settings.hide_on_desktop)}
@@ -544,19 +568,126 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                         </button>
                       </div>
                     </div>
+
+                    <div className={`p-4 bg-white/50 rounded-2xl border border-gray-100 space-y-4 transition-all ${!settings.is_pro ? 'opacity-30' : ''}`}>
+                        <div>
+                           <p className="text-[9px] font-black uppercase text-gray-400 tracking-wider mb-2">Detailed Platform Targeting</p>
+                           <div className="flex flex-wrap gap-2">
+                              {[
+                                { id: 'os_ios', name: 'iOS', icon: <Smartphone className="w-2.5 h-2.5" /> },
+                                { id: 'os_android', name: 'Android', icon: <Smartphone className="w-2.5 h-2.5" /> },
+                                { id: 'os_windows', name: 'Windows', icon: <Monitor className="w-2.5 h-2.5" /> },
+                                { id: 'os_mac', name: 'macOS', icon: <Monitor className="w-2.5 h-2.5" /> },
+                              ].map(p => (
+                                <button
+                                  key={p.id}
+                                  onClick={() => settings.is_pro && updateSetting(p.id, !settings[p.id])}
+                                  className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border text-[9px] font-black uppercase transition-all ${settings[p.id] ? 'bg-red-50 border-red-200 text-red-500 shadow-sm' : 'bg-white border-gray-100 text-gray-400 opacity-60 hover:opacity-100'}`}
+                                  title={`Hide on ${p.name}`}
+                                >
+                                   {p.icon}
+                                   <span>{p.name}</span>
+                                </button>
+                              ))}
+                           </div>
+                        </div>
+
+                        <div>
+                           <p className="text-[9px] font-black uppercase text-gray-400 tracking-wider mb-2">Browser Filtering</p>
+                           <div className="flex flex-wrap gap-2">
+                              {[
+                                { id: 'browser_chrome', name: 'Chrome' },
+                                { id: 'browser_safari', name: 'Safari' },
+                                { id: 'browser_firefox', name: 'Firefox' },
+                              ].map(p => (
+                                <button
+                                  key={p.id}
+                                  onClick={() => settings.is_pro && updateSetting(p.id, !settings[p.id])}
+                                  className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border text-[9px] font-black uppercase transition-all ${settings[p.id] ? 'bg-red-50 border-red-200 text-red-500 shadow-sm' : 'bg-white border-gray-100 text-gray-400 opacity-60 hover:opacity-100'}`}
+                                  title={`Hide on ${p.name}`}
+                                >
+                                   <Globe className="w-2.5 h-2.5" />
+                                   <span>{p.name}</span>
+                                </button>
+                              ))}
+                           </div>
+                        </div>
+                    </div>
                   </div>
 
                   <div className="space-y-3">
                     <label className={labelClass}>Business Schedule</label>
-                    <div className={`p-2.5 bg-white rounded-lg border border-gray-200 flex items-center justify-between ${settings.businessHours_enabled ? 'border-green-200 bg-green-50' : ''}`}>
-                      <span className="text-[10px] font-bold text-gray-700">Show active hours only</span>
-                      <button
-                        disabled={!settings.is_pro}
-                        onClick={() => updateSetting('businessHours_enabled', !settings.businessHours_enabled)}
-                        className={`vb-toggle-sm ${settings.businessHours_enabled ? 'vb-toggle--on' : 'vb-toggle--off'}`}
-                      >
-                        <div className="vb-toggle-thumb-sm" />
-                      </button>
+                    <div className="space-y-3">
+                      <div className={`p-2.5 bg-white rounded-lg border border-gray-200 flex items-center justify-between ${settings.businessHours_enabled ? 'border-green-200 bg-green-50' : ''}`}>
+                        <span className="text-[10px] font-bold text-gray-700">Show active hours only</span>
+                        <button
+                          disabled={!settings.is_pro}
+                          onClick={() => updateSetting('businessHours_enabled', !settings.businessHours_enabled)}
+                          className={`vb-toggle-sm ${settings.businessHours_enabled ? 'vb-toggle--on' : 'vb-toggle--off'}`}
+                        >
+                          <div className="vb-toggle-thumb-sm" />
+                        </button>
+                      </div>
+
+                      {settings.businessHours_enabled && settings.is_pro && (
+                        <div className="p-4 bg-white/80 rounded-2xl border border-gray-100 space-y-5 animate-in fade-in slide-in-from-top-2 duration-300">
+                          <div className="space-y-2">
+                             <p className="text-[9px] font-black uppercase text-gray-400 tracking-wider">Active Days</p>
+                             <div className="flex justify-between gap-1">
+                                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, idx) => {
+                                   const dayId = `businessHours_day_${idx}`;
+                                   const isSelected = settings[dayId] !== undefined ? settings[dayId] : true;
+                                   return (
+                                      <button
+                                         key={day}
+                                         type="button"
+                                         onClick={() => updateSetting(dayId, !isSelected)}
+                                         className={`w-8 h-8 rounded-full border text-[10px] font-black flex items-center justify-center transition-all ${isSelected ? 'bg-green-500 border-green-500 text-white shadow-sm shadow-green-100' : 'bg-white border-gray-100 text-gray-400'}`}
+                                      >
+                                         {day[0]}
+                                      </button>
+                                   );
+                                })}
+                             </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="p-2 bg-white rounded-lg border border-gray-100">
+                              <label className="text-[9px] font-black uppercase text-gray-400 mb-1 block">Start Time</label>
+                              <input 
+                                type="time" 
+                                value={settings.businessHours_start || '08:00'}
+                                onChange={(e) => updateSetting('businessHours_start', e.target.value)}
+                                className="w-full bg-transparent border-none text-[11px] font-black focus:outline-none p-0"
+                              />
+                            </div>
+                            <div className="p-2 bg-white rounded-lg border border-gray-100">
+                              <label className="text-[9px] font-black uppercase text-gray-400 mb-1 block">End Time</label>
+                              <input 
+                                type="time" 
+                                value={settings.businessHours_end || '18:00'}
+                                onChange={(e) => updateSetting('businessHours_end', e.target.value)}
+                                className="w-full bg-transparent border-none text-[11px] font-black focus:outline-none p-0"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                             <p className="text-[9px] font-black uppercase text-gray-400 tracking-wider">Holiday / Specific Dates Exclusion</p>
+                             <div className="relative">
+                                <AlertCircle className="absolute right-3 top-2.5 w-3 h-3 text-gray-400" />
+                                <input
+                                   type="text"
+                                   placeholder="2026-12-25, 2027-01-01"
+                                   value={settings.businessHours_dates || ''}
+                                   onChange={(e) => updateSetting('businessHours_dates', e.target.value)}
+                                   className="w-full p-2.5 pr-8 bg-white border border-gray-200 rounded-xl text-[10px] font-black placeholder:text-gray-300 focus:border-blue-200 outline-none transition-all shadow-inner"
+                                />
+                             </div>
+                             <p className="text-[8px] text-gray-400 font-bold italic">Comma separated YYYY-MM-DD. Button will hide on these dates.</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -566,17 +697,36 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                   <div className="space-y-3">
                     <label className={labelClass}>Stock & Inventory</label>
                     <div className="grid grid-cols-1 gap-2">
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-gray-200">
-                        <span className="text-[10px] font-bold text-gray-700">Hide if Stock &lt;</span>
-                        <input
-                          type="number"
-                          placeholder="0"
+                       <div className={`flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100 transition-all ${!settings.stock_threshold_enabled ? 'opacity-50' : 'border-blue-100'}`}>
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-700">Filter by stock level</p>
+                          <p className="text-[8px] text-gray-400 uppercase font-black">Hide if low stock</p>
+                        </div>
+                        <button
                           disabled={!settings.is_pro}
-                          value={settings.stock_threshold || ''}
-                          onChange={(e) => updateSetting('stock_threshold', e.target.value)}
-                          className="w-12 h-6 bg-gray-50 text-[10px] text-center border rounded border-gray-200 font-bold focus:bg-white transition-all outline-none"
-                        />
+                          onClick={() => updateSetting('stock_threshold_enabled', !settings.stock_threshold_enabled)}
+                          className={`vb-toggle-sm ${settings.stock_threshold_enabled ? 'vb-toggle--on' : 'vb-toggle--off'}`}
+                        >
+                          <div className="vb-toggle-thumb-sm" />
+                        </button>
                       </div>
+
+                      {settings.stock_threshold_enabled && settings.is_pro && (
+                        <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-blue-50 animate-in slide-in-from-top-2 duration-300">
+                          <span className="text-[10px] font-bold text-gray-600">Hide if Stock &lt;</span>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              placeholder="0"
+                              disabled={!settings.is_pro}
+                              value={settings.stock_threshold || ''}
+                              onChange={(e) => updateSetting('stock_threshold', e.target.value)}
+                              className="w-16 h-8 bg-gray-50 text-[11px] text-center border-none rounded-lg font-black focus:bg-white transition-all outline-none"
+                            />
+                            <span className="text-[10px] font-black text-gray-400">UNITS</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 

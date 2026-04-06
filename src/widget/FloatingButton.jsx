@@ -69,7 +69,62 @@ const trackEvent = async (eventType, channelId, productId) => {
   }
 };
 
-const useOrderFlow = (settings, channelId, product, manualData) => {
+const checkVisibility = (settings, productData) => {
+   if (!settings.is_pro) return true;
+ 
+   // 1. Device Check
+   const isMobile = window.innerWidth < 768;
+   if (isMobile && settings.hide_on_mobile) return false;
+   if (!isMobile && settings.hide_on_desktop) return false;
+ 
+   // Advanced Platform Detection (PRO)
+   const ua = navigator.userAgent.toLowerCase();
+   
+   // OS Targeting (PRO-HIDE)
+   if (settings.os_ios && /iphone|ipad|ipod/.test(ua)) return false;
+   if (settings.os_android && /android/.test(ua)) return false;
+   if (settings.os_windows && /windows/.test(ua)) return false;
+   if (settings.os_mac && /macintosh/.test(ua) && !(/iphone|ipad|ipod/.test(ua))) return false;
+ 
+   // Browser Targeting (PRO-HIDE)
+   if (settings.browser_chrome && ua.includes('chrome') && !ua.includes('edg') && !ua.includes('opr')) return false;
+   if (settings.browser_safari && ua.includes('safari') && !ua.includes('chrome')) return false;
+   if (settings.browser_firefox && ua.includes('firefox')) return false;
+ 
+   // 2. Business Schedule Check
+   if (settings.businessHours_enabled) {
+     const now = new Date();
+     
+     // a. Day check
+     const currentDay = now.getDay();
+     const dayId = `businessHours_day_${currentDay}`;
+     const isDayActive = settings[dayId] !== undefined ? settings[dayId] : true;
+     if (!isDayActive) return false;
+ 
+     // b. Date check (Holiday)
+     const currentStrDate = now.toISOString().split('T')[0];
+     const excludedDates = (settings.businessHours_dates || '').split(',').map(d => d.trim());
+     if (excludedDates.includes(currentStrDate)) return false;
+ 
+     // c. Time check
+     const currentStrTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+     const start = settings.businessHours_start || '08:00';
+     const end = settings.businessHours_end || '18:00';
+  
+     if (currentStrTime < start || currentStrTime > end) return false;
+   }
+ 
+   // 3. Stock Level Check
+   if (settings.stock_threshold_enabled && productData) {
+      const threshold = parseInt(settings.stock_threshold || 0);
+      const stock = productData.stock_qty !== null ? parseInt(productData.stock_qty) : (productData.is_in_stock ? 999 : 0);
+      if (stock < threshold) return false;
+   }
+ 
+   return true;
+ };
+ 
+ const useOrderFlow = (settings, channelId, product, manualData) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const payload = window.vibebuyWidgetData || {};
@@ -241,15 +296,17 @@ const LeadButton = ({ settings, productData, manualData }) => {
     fontSize: `${fSize}px`,
   };
 
-  return (
-    <div style={{ width: style.width }} className="flex-shrink-0">
-      <button 
-        type="button"
-        disabled={isSubmitted || isOutOfStock}
-        onClick={(e) => !isOutOfStock && triggerAction(e)}
-        style={style}
-        className="w-full font-semibold px-4 flex items-center justify-center gap-2 transition-all shadow-sm hover:opacity-90 hover:scale-[1.01]"
-      >
+  if (!checkVisibility(settings, productData)) return null;
+ 
+   return (
+     <div style={{ width: style.width }} className="flex-shrink-0">
+       <button 
+         type="button"
+         disabled={isSubmitted || isOutOfStock}
+         onClick={(e) => !isOutOfStock && triggerAction(e)}
+         style={style}
+         className="w-full font-semibold px-4 flex items-center justify-center gap-2 transition-all shadow-sm hover:opacity-90 hover:scale-[1.01]"
+       >
         {bIcon ? (
            <img src={bIcon} alt="Icon" className="w-5 h-5 rounded-full object-cover" />
         ) : (
@@ -303,9 +360,11 @@ const FloatingBubble = ({ settings, productData }) => {
   const hasText = settings.buttonText && settings.buttonText.trim() !== '';
   const position = settings.floatingSocial_position || 'bottom-right';
   const isLeft = position === 'bottom-left';
-
-  return (
-    <>
+ 
+   if (!checkVisibility(settings, productData)) return null;
+ 
+   return (
+     <>
       {showShortcutBar && (
         <SocialShortcutBar 
           settings={settings} 

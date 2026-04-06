@@ -46,14 +46,23 @@ const OrderModal = ({ isOpen, onClose, onSubmit, channel, product, userData, set
 
     if (success) {
       setIsSuccess(true);
-      // Wait a bit longer for the user to read the success message
+      
+      // Wait a bit for the user to see the success state
       setTimeout(() => {
         setIsSuccess(false);
+
+        // PRO: Redirect Logic
+        if (settings.is_pro && settings.after_submission_action === 'redirect' && settings.after_submission_redirect_url) {
+          window.location.href = settings.after_submission_redirect_url;
+          return;
+        }
+
         // Only WhatsApp in Lite opens a direct link. Other integrations use server-side push notifications.
         const activeChannels = settings.activeChannels || [];
         const isWhatsappActive = activeChannels.includes('whatsapp') || channel?.id === 'whatsapp';
-        const shouldRedirect = !settings.is_pro && isWhatsappActive;
-        onClose(shouldRedirect);
+        const shouldRedirectToChat = !settings.is_pro && isWhatsappActive;
+        
+        onClose(shouldRedirectToChat);
       }, 2000);
     } else {
       setIsSubmitting(false);

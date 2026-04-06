@@ -288,7 +288,8 @@ const App = () => {
   const [detailId, setDetailId] = useState(() => getUrlParam('id', null));
   const [settings, setSettings] = useState({ 
     activeChannels: [],
-    global_message_template: '' 
+    global_message_template: '',
+    is_pro: window.vibebuyData?.isPro || false
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
