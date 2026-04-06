@@ -56,7 +56,7 @@ const AnalyticsView = ({ settings }) => {
   }, [settings.is_pro, settings.totalConnections]);
 
   if (loading) return (
-    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[20px] border border-gray-100 shadow-sm animate-pulse">
+    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[20px] border border-gray-100 shadow-sm">
       <div className="vb-spinner mb-4" />
       <p className="text-gray-400 font-black uppercase text-[10px] tracking-widest leading-none">Analyzing Data...</p>
     </div>
@@ -127,8 +127,14 @@ const AnalyticsView = ({ settings }) => {
     );
   };
 
+  const ProBadge = ({ text = "PRO", className = "" }) => (
+    <span className={`text-[10px] font-black bg-amber-400 text-white px-2.5 py-1 rounded shadow-sm flex items-center gap-1.5 leading-none uppercase ${className}`}>
+      <Lock className="w-3 h-3" /> {text}
+    </span>
+  );
+
   return (
-    <div className="relative animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
+    <div className="relative space-y-6">
       
       {/* 1. Header & Controls */}
       <div className="flex justify-between items-end mb-2 px-2">
@@ -153,9 +159,7 @@ const AnalyticsView = ({ settings }) => {
           <div key={i} className="bg-white p-5 rounded-[20px] border border-[#eef0f5] shadow-sm relative overflow-hidden">
             {!settings.is_pro && (
               <div className="absolute top-3 right-3 z-10">
-                <span className="text-[8px] font-black bg-amber-400 text-white px-2 py-0.5 rounded shadow-sm flex items-center gap-1 leading-none uppercase">
-                  <Lock className="w-2.5 h-2.5" /> Pro Only
-                </span>
+                <ProBadge text="PRO" className="text-[8px] px-2 py-0.5" />
               </div>
             )}
             <div className="flex items-center justify-between mb-4">
@@ -180,11 +184,8 @@ const AnalyticsView = ({ settings }) => {
          {/* 3. Traffic Origins */}
          <div className="vb-section-card relative overflow-hidden flex flex-col h-full cursor-default">
             {!settings.is_pro && (
-               <div className="absolute inset-0 bg-white/5 z-10 flex items-center justify-center pointer-events-none">
-                  <div className="bg-white/95 px-6 py-3 rounded-2xl shadow-2xl border border-amber-100 flex items-center gap-3 transform -rotate-1">
-                     <Lock className="w-4 h-4 text-amber-500" />
-                     <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest">PRO: Source Discovery</span>
-                  </div>
+               <div className="absolute inset-0 bg-white/5 z-20 flex items-center justify-center pointer-events-none">
+                  <ProBadge text="PRO: Source Discovery" className="shadow-2xl scale-110 -rotate-1" />
                </div>
             )}
             <div className="vb-section-header border-b border-gray-50 flex items-center justify-between">
@@ -193,7 +194,8 @@ const AnalyticsView = ({ settings }) => {
                   <p className="vb-section-subtitle">Realtime analysis of lead acquisition sources.</p>
                </div>
                <Share2 className="w-5 h-5 text-gray-400" />
-            </div>             <div className={`p-4 flex-1 ${!settings.is_pro ? 'opacity-40 grayscale-[0.5]' : ''}`}>
+            </div>
+            <div className={`p-4 flex-1 ${!settings.is_pro ? 'opacity-40 grayscale-[0.5]' : ''}`}>
                {data.top_referrers.map((r, i) => (
                   <div key={i} className="flex items-center gap-4 p-3 rounded-xl border border-transparent">
                      <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400">#{i+1}</div>
@@ -213,11 +215,8 @@ const AnalyticsView = ({ settings }) => {
          {/* 4. Peak Engagement Hours */}
          <div className="vb-section-card h-full relative overflow-hidden flex flex-col cursor-default">
             {!settings.is_pro && (
-               <div className="absolute inset-0 bg-white/5 z-10 flex items-center justify-center pointer-events-none">
-                  <div className="bg-white/95 px-6 py-3 rounded-2xl shadow-2xl border border-amber-100 flex items-center gap-3 transform rotate-1">
-                     <Lock className="w-4 h-4 text-amber-500" />
-                     <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest">PRO: Activity Heatmap</span>
-                  </div>
+               <div className="absolute inset-0 bg-white/5 z-20 flex items-center justify-center pointer-events-none">
+                  <ProBadge text="PRO: Activity Heatmap" className="shadow-2xl scale-110 rotate-1" />
                </div>
             )}
             <div className="vb-section-header border-b border-gray-50 flex items-center justify-between">
@@ -248,11 +247,8 @@ const AnalyticsView = ({ settings }) => {
         {/* 5. Most Popular Products */}
         <div className="lg:col-span-2 vb-section-card relative overflow-hidden cursor-default">
           {!settings.is_pro && (
-            <div className="absolute inset-0 bg-white/5 z-10 flex items-center justify-center pointer-events-none">
-               <div className="bg-white/95 px-5 py-2 rounded-2xl shadow-xl border border-amber-100 flex items-center gap-3 scale-90">
-                  <Lock className="w-4 h-4 text-amber-500" />
-                  <span className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Product Popularity PRO</span>
-               </div>
+            <div className="absolute inset-0 bg-white/5 z-20 flex items-center justify-center pointer-events-none">
+               <ProBadge text="Product Popularity PRO" className="shadow-2xl scale-100" />
             </div>
           )}
           <div className="vb-section-header border-b border-gray-50 flex items-center justify-between">
@@ -283,7 +279,7 @@ const AnalyticsView = ({ settings }) => {
         <div className="lg:col-span-1 p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-[20px] border border-amber-100 flex flex-col gap-6 relative overflow-hidden shadow-sm">
             {!settings.is_pro && (
                <div className="absolute top-4 right-4">
-                  <span className="text-[8px] font-black bg-white text-amber-600 px-2.5 py-1 rounded-full shadow-sm border border-amber-100">PRO EXCLUSIVE</span>
+                  <ProBadge text="PRO" className="text-[8px] px-2 py-0.5" />
                </div>
             )}
             <div className={`w-16 h-16 rounded-[20px] bg-amber-400 flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-200/50 ${!settings.is_pro ? 'opacity-50' : ''}`}>
@@ -312,11 +308,8 @@ const AnalyticsView = ({ settings }) => {
       {/* 7. Global Reach */}
       <div className="vb-section-card relative overflow-hidden cursor-default">
         {!settings.is_pro && (
-          <div className="absolute inset-0 bg-white/5 z-10 flex items-center justify-center pointer-events-none">
-             <div className="bg-white/98 px-8 py-4 rounded-[32px] shadow-2xl border border-amber-100 flex items-center gap-4 animate-bounce">
-                <Lock className="w-5 h-5 text-amber-500" />
-                <span className="text-xs font-black text-slate-900 uppercase tracking-widest">ADVANCED GEOLOCATION LOCKED</span>
-             </div>
+          <div className="absolute inset-0 bg-white/5 z-20 flex items-center justify-center pointer-events-none">
+             <ProBadge text="Advanced Geolocation Locked" className="shadow-2xl animate-bounce px-6 py-3 rounded-full" />
           </div>
         )}
         <div className="vb-section-header border-b border-gray-50 flex items-center justify-between bg-gray-50/30">

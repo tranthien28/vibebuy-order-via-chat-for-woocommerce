@@ -397,7 +397,7 @@ const bootstrapWidget = () => {
   // Render all mounted roots with updated product data
   const rerenderAllWithProduct = (updatedProduct) => {
     currentProductRef.current = updatedProduct;
-    mountedRoots.forEach(({ root, type, props }) => {
+    mountedRoots.forEach(({ root, type, props, node }) => {
       if (type === 'inline') {
         root.render(<InlineChatButtons settings={settings} productData={updatedProduct} manualData={props.manualData} />);
       } else if (type === 'group') {
@@ -502,7 +502,30 @@ const bootstrapWidget = () => {
      if (isWoo) mountedRoots.push({ root, type: 'group', props: {} });
   });
 
-  // 3. Floating Bubble
+  // 3. New Loop Integration (PRO)
+  const loopNodes = document.querySelectorAll('.vibebuy-loop-widget-root');
+  loopNodes.forEach(node => {
+     const loopProductData = {
+        id: parseInt(node.dataset.productId || 0),
+        name: node.dataset.productName || '',
+        image: node.dataset.productImage || '',
+        price: node.dataset.productPrice || '',
+        url: node.dataset.productUrl || '',
+        currency: product?.currency || '$'
+     };
+     
+     const root = createRoot(node);
+     root.render(
+        <div className="vibebuy-loop-button-wrapper font-sans">
+           <LeadButton 
+              settings={settings}
+              productData={loopProductData}
+           />
+        </div>
+     );
+  });
+
+  // 4. Floating Bubble
   const floatingContainer = document.getElementById('vibebuy-widget-root');
   if (floatingContainer) {
     const root = createRoot(floatingContainer);

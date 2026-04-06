@@ -104,6 +104,7 @@ class VibeBuy_API {
 			'buttonText'              => 'Chat with us',
 			'order_creation_enabled'  => true,
 			'order_creation_status'   => 'pending',
+			'loop_display_enabled'    => false,
 		);
 		$settings                     = get_option( 'vibebuy_lite_settings', array() );
 		$settings['totalConnections'] = VibeBuy_DB::get_total_connections_count();
@@ -111,6 +112,19 @@ class VibeBuy_API {
 		$settings['activeChannels'] = array_values( $settings['activeChannels'] ?? [] );
 		$settings['is_pro']         = vibebuy_is_pro();
 		$settings['license_key']    = get_option( 'vibebuy_license_key', '' );
+
+		// Load available WC statuses
+		$wc_statuses = function_exists( 'wc_get_order_statuses' ) ? wc_get_order_statuses() : array();
+		$available_statuses = array();
+		foreach ( $wc_statuses as $slug => $label ) {
+			// Normalize slug (strip 'wc-')
+			$clean_slug = str_replace( 'wc-', '', $slug );
+			$available_statuses[] = array(
+				'id'    => $clean_slug,
+				'label' => $label,
+			);
+		}
+		$settings['availableStatuses'] = $available_statuses;
 
 		// Enforce Lite limit: Only 1 active channel allowed
 		if ( ! $settings['is_pro'] && count( $settings['activeChannels'] ) > 1 ) {
@@ -166,6 +180,9 @@ class VibeBuy_API {
 			$allowed_statuses = array( 'pending', 'processing', 'on-hold', 'completed' );
 			$status = sanitize_text_field( $params['order_creation_status'] );
 			$settings['order_creation_status'] = in_array( $status, $allowed_statuses ) ? $status : 'pending';
+		}
+		if ( isset( $params['loop_display_enabled'] ) ) {
+			$settings['loop_display_enabled'] = rest_sanitize_boolean( $params['loop_display_enabled'] );
 		}
 
 		// --- Channel-specific settings (dynamic via registry) ---

@@ -101,7 +101,7 @@ const Toast = ({ message, desc }) => (
   </div>
 );
 
-const DashboardContent = ({ activeTab, settings, updateSetting, startConfig, handleSave, saving, onUpgrade, onNavigate, onViewDetail, detailId, helpContext }) => {
+const DashboardContent = ({ activeTab, settings, updateSetting, setSettings, startConfig, handleSave, saving, onUpgrade, onNavigate, onViewDetail, detailId, helpContext, setToast }) => {
   const toggleChannel = (channelId) => {
     const activeChannels = settings.activeChannels || [];
     const isNowActive = !activeChannels.includes(channelId);
@@ -262,6 +262,13 @@ const DashboardContent = ({ activeTab, settings, updateSetting, startConfig, han
             saving={saving} 
           />
         )}
+        {activeTab === 'license' && (
+          <LicenseView 
+            settings={settings} 
+            onUpdateSettings={setSettings}
+            onToast={(title, desc, type) => setToast({ message: title, desc, type })}
+          />
+        )}
       </div>
     </>
   );
@@ -397,35 +404,24 @@ const App = () => {
       <Sidebar activeTab={activeTab} onNavigate={handleNavigate} onUpgrade={() => setShowUpgradeModal(true)} settings={settings} />
       <div className="vb-main">
         {currentStep === 0 ? (
-          <>
-            {activeTab === 'license' ? (
-              <LicenseView 
-                settings={settings} 
-                onUpdateSettings={(newSets) => {
-                  setSettings(newSets);
-                  handleNavigate('dashboard');
-                } }
-                onToast={(title, desc, type) => setToast({ message: title, desc, type })}
-              />
-            ) : (
-              <DashboardContent
-                activeTab={activeTab}
-                settings={settings}
-                updateSetting={updateSetting}
-                startConfig={startConfig}
-                handleSave={handleSave}
-                saving={saving}
-                onUpgrade={() => setShowUpgradeModal(true)}
-                onHelp={navigateToHelp}
-                onNavigate={handleNavigate}
-                onViewDetail={(id) => {
-                  setDetailId(id);
-                  setActiveTab('conversation-detail');
-                }}
-                detailId={detailId}
-                helpContext={helpContext} />
-            )}
-          </>
+          <DashboardContent
+            activeTab={activeTab}
+            settings={settings}
+            updateSetting={updateSetting}
+            setSettings={setSettings}
+            startConfig={startConfig}
+            handleSave={handleSave}
+            saving={saving}
+            onUpgrade={() => setShowUpgradeModal(true)}
+            onHelp={navigateToHelp}
+            onNavigate={handleNavigate}
+            onViewDetail={(id) => {
+              setDetailId(id);
+              setActiveTab('conversation-detail');
+            }}
+            detailId={detailId}
+            helpContext={helpContext}
+            setToast={setToast} />
         ) : (
           <div className="vb-wizard-inner">
             <header className="vb-wizard-header">
@@ -452,91 +448,119 @@ const App = () => {
                <p className="text-xs font-medium text-gray-400">Branding and display settings have been moved to the <span className="text-blue-500 font-bold">Global Settings</span> tab for a unified experience.</p>
             </div>
 
-            <main className="vb-wizard-body">
-              <div className="vb-form-pane">
-                <div className="vb-form-inner">
-                  <div className="vb-form-card">
-                    {StepComponent ? (
-                      <StepComponent
-                        channel={channel}
-                        settings={settings}
-                        updateSetting={updateSetting}
-                        setCurrentStep={setCurrentStep}
-                        onNavigate={handleNavigate}
-                        onHelp={navigateToHelp}
-                      />
-                    ) : (
-                      <div className="text-center py-12">
-                        <div className="vb-spinner-sm mx-auto mb-4" />
-                        <p className="text-gray-400 text-sm">Loading Step...</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* ─── Placement Settings Section (PRO Locked) ─── */}
-                  <div className={`vb-form-card mt-6 p-6 border-2 border-dashed transition-all ${!settings.is_pro ? 'border-gray-100 bg-gray-50/50 opacity-80 backdrop-blur-[1px]' : 'border-blue-100 bg-blue-50/20'}`}>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <Share2 className={`w-4 h-4 ${settings.is_pro ? 'text-blue-500' : 'text-gray-400'}`} />
-                        <h3 className="text-xs font-black uppercase text-gray-900 tracking-wider">Placement Setting</h3>
-                      </div>
-                      {!settings.is_pro && (
-                        <div className="flex items-center gap-1 bg-amber-400 text-white px-2 py-0.5 rounded text-[9px] font-black shadow-sm uppercase">
-                           PRO
+            <main className="p-8">
+              <div className="flex flex-col lg:flex-row gap-8">
+                
+                {/* Left: Configuration Form */}
+                <div className="flex-1 space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
+                  <div className="vb-section-card p-0 overflow-visible">
+                    <div className="p-8">
+                      {StepComponent ? (
+                        <StepComponent
+                          channel={channel}
+                          settings={settings}
+                          updateSetting={updateSetting}
+                          setCurrentStep={setCurrentStep}
+                          onNavigate={handleNavigate}
+                          onHelp={navigateToHelp}
+                        />
+                      ) : (
+                        <div className="text-center py-20">
+                          <div className="vb-spinner-sm mx-auto mb-4" />
+                          <p className="text-gray-400 text-xs font-black uppercase tracking-widest">Loading configuration...</p>
                         </div>
                       )}
                     </div>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <p className="text-sm font-bold text-gray-800">Show as Floating Shortcut</p>
-                          <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
-                            { (editChannel === 'tiktok' || editChannel === 'instagram') 
-                                ? 'TikTok and Instagram always use this mode to ensure compatibility.'
-                                : 'Enable this to show the icon as a secondary shortcut floating bar, skipping the lead form.'
-                            }
-                          </p>
+
+                    {/* ─── Placement Settings Section (PRO Locked) ─── */}
+                    <div className={`p-8 border-t border-dashed transition-all ${!settings.is_pro ? 'bg-gray-50/30' : 'bg-blue-50/5'}`}>
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${settings.is_pro ? 'bg-blue-50 text-blue-500' : 'bg-gray-100 text-gray-400'}`}>
+                            <Share2 className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <h3 className="text-xs font-black uppercase text-gray-900 tracking-widest">Placement Setting</h3>
+                            <p className="text-[10px] text-gray-400 font-medium italic">Define how this channel interacts with the widget</p>
+                          </div>
                         </div>
-                        <button 
-                          disabled={!settings.is_pro}
-                          onClick={() => updateSetting(`${editChannel}_show_as_shortcut`, !settings[`${editChannel}_show_as_shortcut`])}
-                          className={`vb-toggle ${ (settings[`${editChannel}_show_as_shortcut`] || editChannel === 'tiktok' || editChannel === 'instagram') ? 'vb-toggle--on' : 'vb-toggle--off'} ${!settings.is_pro ? 'grayscale opacity-50' : ''}`}
-                        >
-                          <div className={`vb-toggle-thumb ${ (settings[`${editChannel}_show_as_shortcut`] || editChannel === 'tiktok' || editChannel === 'instagram') ? 'vb-toggle-thumb--on' : 'vb-toggle-thumb--off'}`} />
-                        </button>
+                        {!settings.is_pro && (
+                          <div className="bg-amber-400 text-white px-2 py-0.5 rounded text-[8px] font-black shadow-sm uppercase tracking-tighter">
+                             PRO ONLY
+                          </div>
+                        )}
                       </div>
                       
-                      {!settings.is_pro && (
-                        <p className="text-[10px] text-amber-600 font-bold italic mt-2">
-                          * Upgrade to PRO to enable floating shortcuts and separate social icons from the main button.
-                        </p>
-                      )}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-gray-800 mb-1">Show as Floating Shortcut</p>
+                            <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
+                              { (editChannel === 'tiktok' || editChannel === 'instagram') 
+                                  ? 'TikTok and Instagram always use this mode to ensure compatibility.'
+                                  : 'Enable this to show the icon as a secondary shortcut floating bar, skipping the lead form.'
+                              }
+                            </p>
+                          </div>
+                          <button 
+                            disabled={!settings.is_pro}
+                            onClick={() => updateSetting(`${editChannel}_show_as_shortcut`, !settings[`${editChannel}_show_as_shortcut`])}
+                            className={`vb-toggle ${ (settings[`${editChannel}_show_as_shortcut`] || editChannel === 'tiktok' || editChannel === 'instagram') ? 'vb-toggle--on' : 'vb-toggle--off'} ${!settings.is_pro ? 'grayscale opacity-50' : ''}`}
+                          >
+                            <div className={`vb-toggle-thumb ${ (settings[`${editChannel}_show_as_shortcut`] || editChannel === 'tiktok' || editChannel === 'instagram') ? 'vb-toggle-thumb--on' : 'vb-toggle-thumb--off'}`} />
+                          </button>
+                        </div>
+                        
+                        {!settings.is_pro && (
+                          <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                             <Lock className="w-3.5 h-3.5 text-amber-500" />
+                             <p className="text-[10px] text-amber-800 font-bold italic">
+                               Upgrade to PRO to unlock shortcut bars and custom placement logic.
+                             </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="vb-preview-pane">
-                <div className="vb-preview-header">
-                  <h3 className="vb-preview-title">Live Preview</h3>
-                  <div className="vb-preview-toggle">
-                    <button
-                      onClick={() => setPreviewMode('mobile')}
-                      className={`vb-preview-toggle-btn ${previewMode === 'mobile' ? 'vb-preview-toggle-btn--active' : ''}`}
-                    >
-                      <Smartphone className="w-4 h-4" /> Mobile
-                    </button>
-                    <button
-                      onClick={() => setPreviewMode('desktop')}
-                      className={`vb-preview-toggle-btn ${previewMode === 'desktop' ? 'vb-preview-toggle-btn--active' : ''}`}
-                    >
-                      <Monitor className="w-4 h-4" /> Desktop
-                    </button>
+                {/* Right: Live Preview (Sticky) */}
+                <div className="lg:w-[320px] shrink-0">
+                  <div className="sticky top-8 space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
+                    <div className="flex items-center justify-between px-1">
+                       <h3 className="text-[11px] font-black uppercase text-gray-400 tracking-[0.2em]">Live Preview</h3>
+                       <div className="bg-gray-100 p-1 rounded-xl shadow-inner flex items-center gap-1">
+                          <button 
+                            onClick={() => setPreviewMode('mobile')}
+                            className={`p-1.5 rounded-lg transition-all ${previewMode === 'mobile' ? 'bg-white shadow-sm text-blue-600 border border-gray-100' : 'text-gray-400 opacity-40'}`}
+                          >
+                            <Smartphone className="w-3.5 h-3.5" />
+                          </button>
+                          <button 
+                            onClick={() => setPreviewMode('desktop')}
+                            className={`p-1.5 rounded-lg transition-all ${previewMode === 'desktop' ? 'bg-white shadow-sm text-blue-600 border border-gray-100' : 'text-gray-400 opacity-40'}`}
+                          >
+                            <Monitor className="w-3.5 h-3.5" />
+                          </button>
+                       </div>
+                    </div>
+                    
+                    <div className="bg-slate-50 rounded-[2rem] p-3 border border-slate-100 flex items-center justify-center relative overflow-hidden shadow-inner">
+                      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5" />
+                      <div className="relative z-10 w-full flex justify-center">
+                        <PreviewWidget settings={settings} previewMode={previewMode} editChannel={editChannel} />
+                      </div>
+                    </div>
+
+                    <div className="p-5 bg-white border border-gray-100 rounded-3xl shadow-sm">
+                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                          <Eye className="w-3 h-3 text-blue-500" /> Visual Context
+                       </p>
+                       <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
+                          The preview reflects your current <strong>{channel.name}</strong> configuration alongside global branding settings.
+                       </p>
+                    </div>
                   </div>
-                </div>
-                <div className="vb-preview-body">
-                  <PreviewWidget settings={settings} previewMode={previewMode} editChannel={editChannel} />
                 </div>
               </div>
             </main>

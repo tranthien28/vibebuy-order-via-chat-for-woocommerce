@@ -393,11 +393,16 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                   </button>
                 </div>
 
-                <div className={`pt-4 border-t border-gray-100 ${!settings.is_pro ? 'opacity-60 grayscale' : ''}`}>
+                <div className={`pt-4 border-t border-gray-100 ${!settings.is_pro ? 'opacity-60 grayscale' : ''} relative`}>
                   <div className="flex items-center justify-between mb-2">
-                    <label className={labelClass}>Default Order Status</label>
+                    <div className="flex items-center gap-1.5">
+                      <label className={labelClass}>Default Order Status</label>
+                      {!settings.is_pro && <Lock className="w-2.5 h-2.5 text-amber-500" />}
+                    </div>
                     {!settings.is_pro && (
-                      <span className="bg-amber-400 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm">PRO</span>
+                      <span className="bg-amber-400 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1">
+                        PRO ONLY
+                      </span>
                     )}
                   </div>
                   <div className="relative group">
@@ -405,17 +410,52 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                       disabled={!settings.is_pro}
                       value={settings.order_creation_status || 'pending'}
                       onChange={(e) => updateSetting('order_creation_status', e.target.value)}
-                      className={inputClass}
+                      className={`${inputClass} ${!settings.is_pro ? 'cursor-not-allowed bg-gray-50' : ''}`}
                     >
-                      <option value="pending">Pending Payment</option>
-                      <option value="processing">Processing</option>
-                      <option value="on-hold">On Hold</option>
-                      <option value="completed">Completed</option>
+                      {settings.availableStatuses && settings.availableStatuses.length > 0 ? (
+                        settings.availableStatuses.map(status => (
+                          <option key={status.id} value={status.id}>{status.label}</option>
+                        ))
+                      ) : (
+                        <>
+                          <option value="pending">Pending Payment</option>
+                          <option value="processing">Processing</option>
+                          <option value="on-hold">On Hold</option>
+                          <option value="completed">Completed</option>
+                        </>
+                      )}
                     </select>
-                    {!settings.is_pro && <div className="absolute inset-0 cursor-not-allowed" />}
+                    {!settings.is_pro && (
+                      <div 
+                        className="absolute inset-0 cursor-not-allowed z-10" 
+                        title="Upgrading to PRO is required to change order status"
+                        onClick={() => {}}
+                      />
+                    )}
                   </div>
-                  <p className="text-[10px] text-gray-400 font-medium mt-1.5 leading-tight">
-                    {settings.is_pro ? 'Select the status for newly created orders.' : '* Custom order status is a Pro feature. Default is "Pending Payment".'}
+                  <p className="text-[10px] text-gray-400 font-medium mt-1.5 leading-tight italic">
+                    {settings.is_pro 
+                      ? 'Select the status for newly created orders.' 
+                      : 'Customize order status with the Pro version. All orders are currently created as "Pending Payment".'}
+                  </p>
+                </div>
+
+                <div className={`pt-4 border-t border-gray-100 ${!settings.is_pro ? 'opacity-60 grayscale' : ''} relative`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <label className={labelClass}>Show Button in Product Loops</label>
+                      {!settings.is_pro && <Lock className="w-2.5 h-2.5 text-amber-500" />}
+                    </div>
+                    <button 
+                      disabled={!settings.is_pro}
+                      onClick={() => updateSetting('loop_display_enabled', !settings.loop_display_enabled)} 
+                      className={`vb-toggle ${settings.loop_display_enabled ? 'vb-toggle--on' : 'vb-toggle--off'} ${!settings.is_pro ? 'grayscale opacity-50' : ''}`}
+                    >
+                      <div className={`vb-toggle-thumb ${settings.loop_display_enabled ? 'vb-toggle-thumb--on' : 'vb-toggle-thumb--off'}`} />
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-gray-400 font-medium mt-1.5 leading-tight italic">
+                    Display the VibeBuy contact button on Shop, Category, and Tag listing pages.
                   </p>
                 </div>
               </div>

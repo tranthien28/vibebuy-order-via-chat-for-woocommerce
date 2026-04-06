@@ -477,44 +477,62 @@ const HelpView = ({ onNavigate, initialSection }) => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex flex-col md:flex-row gap-6">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col lg:flex-row gap-8">
+        
         {/* Sidebar Tabs */}
-        <div className="w-full md:w-60 space-y-1.5">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`
-                w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all
-                ${activeTab === tab.id 
-                  ? 'bg-white text-blue-600 shadow-sm border border-gray-100' 
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}
-              `}
-            >
-              <div className={`p-1.5 rounded-lg ${activeTab === tab.id ? 'bg-blue-50' : 'bg-gray-100/50'}`}>
-                {tab.icon}
-              </div>
-              <span className="text-sm">{tab.name}</span>
-              {tab.pro && <Lock className="w-3 h-3 ml-auto text-gray-300" />}
-              {!tab.pro && activeTab === tab.id && <ChevronRight className="w-4 h-4 ml-auto" />}
-            </button>
-          ))}
+        <div className="w-full lg:w-[260px] shrink-0 space-y-1.5">
+          <div className="px-2 mb-4">
+             <h3 className="text-[11px] font-black uppercase text-gray-400 tracking-[0.2em] mb-1">Knowledge Hub</h3>
+             <p className="text-[10px] text-gray-400 font-medium italic">Select a topic below</p>
+          </div>
           
-          <div className="pt-6">
-             <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-4 text-white">
-                <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Documentation</p>
-                <p className="text-[11px] font-medium mb-3">Learn everything about VibeBuy Connect.</p>
-                <button className="w-full py-2 bg-white/20 hover:bg-white/30 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1">
-                    Read Docs <ExternalLink className="w-3 h-3" />
-                </button>
+          <div className="space-y-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`
+                  w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all group
+                  ${activeTab === tab.id 
+                    ? 'bg-white text-blue-600 shadow-md shadow-blue-100/50 border border-blue-50' 
+                    : 'text-gray-400 hover:text-gray-600 hover:bg-white/50'}
+                `}
+              >
+                <div className={`p-2 rounded-xl transition-colors ${activeTab === tab.id ? 'bg-blue-50 text-blue-600' : 'bg-gray-100/50 text-gray-400 group-hover:bg-gray-100 group-hover:text-gray-500'}`}>
+                  {React.cloneElement(tab.icon, { className: "w-4 h-4" })}
+                </div>
+                <span className="text-[13px] tracking-tight">{tab.name}</span>
+                {tab.pro && (
+                  <div className="ml-auto">
+                    <Lock className="w-3 h-3 text-amber-400 opacity-60" />
+                  </div>
+                )}
+                {!tab.pro && activeTab === tab.id && <ChevronRight className="w-4 h-4 ml-auto opacity-40" />}
+              </button>
+            ))}
+          </div>
+          
+          <div className="pt-8 px-2">
+             <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-[24px] p-5 text-white shadow-xl shadow-indigo-100 relative overflow-hidden group/docs">
+                <div className="relative z-10">
+                  <p className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-2">Extended Docs</p>
+                  <p className="text-[11px] font-bold leading-relaxed mb-4 opacity-90">Deep dive into advanced hooks and API integrations.</p>
+                  <button className="w-full py-2.5 bg-white text-indigo-600 hover:bg-indigo-50 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg">
+                      Open Portal <ExternalLink className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                {/* Decorative Circles */}
+                <div className="absolute -top-10 -right-10 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover/docs:scale-150 transition-transform duration-700" />
              </div>
           </div>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 min-h-[420px] bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
-          {renderTutorial()}
+        <div className="flex-1 min-h-[500px]">
+          <div className="vb-section-card h-full p-10 lg:p-12 animate-in fade-in slide-in-from-right-4 duration-500">
+            {renderTutorial()}
+          </div>
         </div>
       </div>
     </div>

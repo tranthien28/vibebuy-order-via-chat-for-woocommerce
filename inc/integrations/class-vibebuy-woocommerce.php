@@ -29,6 +29,9 @@ class VibeBuy_WooCommerce {
 
 		// WooCommerce specific data for the current product
 		add_filter( 'vibebuy_localize_frontend_data', array( $this, 'add_product_context' ) );
+
+		// NEW: Loop Integration
+		add_action( 'woocommerce_after_shop_loop_item', array( $this, 'maybe_render_loop_button' ), 15 );
 	}
 
 	/**
@@ -119,6 +122,48 @@ class VibeBuy_WooCommerce {
 		);
 	}
 
+	/**
+	 * Render a placement holder for the product loop button (PRO).
+	 */
+	public function maybe_render_loop_button() {
+		$settings = get_option( 'vibebuy_lite_settings', array() );
+		$is_pro   = vibebuy_is_pro();
+		$enabled  = $settings['loop_display_enabled'] ?? false;
+
+		if ( ! $is_pro || ! $enabled ) {
+			return;
+		}
+
+		global $product;
+		if ( ! $product ) {
+			return;
+		}
+
+		// Ensure we load assets
+		if ( class_exists( 'VibeBuy_Frontend' ) ) {
+			VibeBuy_Frontend::enqueue_frontend_assets();
+		}
+
+		$image_url = get_the_post_thumbnail_url( $product->get_id(), 'medium' );
+		if ( ! $image_url ) {
+			$image_url = ''; // Ensure string
+		}
+
+		echo sprintf(
+			'<div class="vibebuy-loop-widget-root mt-3 mb-2" 
+				data-product-id="%d" 
+				data-product-name="%s" 
+				data-product-image="%s" 
+				data-product-price="%s" 
+				data-product-url="%s"></div>',
+			intval( $product->get_id() ),
+			esc_attr( $product->get_name() ),
+			esc_url( $image_url ),
+			esc_attr( $product->get_price() ),
+			esc_url( get_permalink( $product->get_id() ) )
+		);
+	}
+
 
 	/**
 	 * Render the widget root if on a product page or if settings allow.
@@ -160,7 +205,7 @@ class VibeBuy_WooCommerce {
 				'price'       => $_product->get_price(),
 				'sku'         => $_product->get_sku(),
 				'url'         => get_permalink( $_product->get_id() ),
-				'image'       => get_the_post_thumbnail_url( $_product->get_id(), 'medium' ),
+				'image'       => get_the_post_thumbnail_url( $_product->get_id(), 'medium' ) ?: '',
 				'currency'    => get_woocommerce_currency_symbol(),
 				'is_variable' => $is_variable,
 				'is_in_stock' => $_product->is_in_stock(),

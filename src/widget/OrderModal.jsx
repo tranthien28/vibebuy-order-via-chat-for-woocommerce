@@ -82,20 +82,25 @@ const OrderModal = ({ isOpen, onClose, onSubmit, channel, product, userData, set
       ));
     }
 
-    // Image Slot
     const imgEl = document.getElementById('vibe-slot-image');
     if (imgEl) {
       slots.push(createPortal(
-        <div className="w-full h-full relative group">
-          {product?.image ? (
-            <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+        <div className="w-full h-full relative group bg-gray-50 flex items-center justify-center">
+          {product?.image && product.image !== 'false' ? (
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              className="w-full h-full object-contain mix-blend-multiply transition-opacity duration-300"
+              onLoad={(e) => e.target.style.opacity = 1}
+              onError={(e) => { e.target.src = ''; e.target.style.display = 'none'; }}
+            />
           ) : (
-            <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center p-4 text-gray-300">
-               <ShoppingCart className="w-10 h-10 mb-2" />
-               <span className="text-[10px] font-bold uppercase">No Photo</span>
+            <div className="w-full h-full flex flex-col items-center justify-center p-4 text-gray-300">
+               <ShoppingCart className="w-10 h-10 mb-2 opacity-20" />
+               <span className="text-[9px] font-black uppercase tracking-widest opacity-40">No Photo</span>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
           <div className="absolute bottom-3 left-3">
              <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/20 shadow-sm">
                 <div className={`vibebuy-modal-icon-xs ${channel.id}`}>{channel.icon}</div>
