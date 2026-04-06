@@ -68,7 +68,7 @@ const ConversationsView = ({ onViewDetail, settings }) => {
     <div className="vb-connections-container">
       <div className="vb-section-header flex justify-between items-center mb-6">
         <div>
-          <h2 className="vb-section-title">Customer Conversations</h2>
+          <h2 className="vb-section-title">Inquiries</h2>
           <p className="vb-section-subtitle">Manage inquiries and leads from your chat buttons.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -114,7 +114,7 @@ const ConversationsView = ({ onViewDetail, settings }) => {
             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
                <MessageCircle className="w-8 h-8" />
             </div>
-            <p className="text-gray-900 font-medium">No conversations found</p>
+            <p className="text-gray-900 font-medium">No inquiries found</p>
             <p className="text-gray-400 text-sm mt-1">Start collecting inquiries by enabling the Order Modal.</p>
           </div>
         ) : (

@@ -87,7 +87,7 @@ class VibeBuy_API {
 		$defaults = array(
 			'activeChannels'          => array( 'whatsapp' ),
 			'enabled'                 => true,
-			'global_message_template' => '',
+			'global_message_template' => "Admin! 🛒 New Product Inquiry!\nCustomer: {{full_name}}\nPhone: {{phone}}\nProduct: {{product_name}}\nID: {{product_id}}\nSKU: {{product_sku}}\nQuantity: {{product_qty}}\nPrice: {{product_price}}\nLink: {{product_url}}\n---\nVibeBuy connect\n---",
 			'orderModal_enabled'      => true,
 			'orderModal_autoFill'     => true,
 			'orderModal_autoOff'      => true,
@@ -335,7 +335,7 @@ class VibeBuy_API {
 	 */
 	private function render_template_message( $data ) {
 		$settings = get_option( 'vibebuy_lite_settings', array() );
-		$template = $settings['global_message_template'] ?? "Admin! 🛒 New Product Inquiry!\nCustomer: {{full_name}}\nPhone: {{phone}}\nProduct: {{product_name}}\nID: {{product_id}}\nSKU: {{product_sku}}\nQuantity: {{product_qty}}\nPrice: {{product_price}}\nLink: {{product_url}}\n---\nVibeBuy connect\n---";
+		$template = ! empty( $settings['global_message_template'] ) ? $settings['global_message_template'] : "Admin! 🛒 New Product Inquiry!\nCustomer: {{full_name}}\nPhone: {{phone}}\nProduct: {{product_name}}\nID: {{product_id}}\nSKU: {{product_sku}}\nQuantity: {{product_qty}}\nPrice: {{product_price}}\nLink: {{product_url}}\n---\nVibeBuy connect\n---";
 
 		$product_name  = 'N/A';
 		$product_sku   = 'N/A';

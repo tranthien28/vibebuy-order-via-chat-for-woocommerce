@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Send, Hash, MessageSquare, ChevronRight, 
   ExternalLink, CheckCircle2, 
-  AlertCircle, Lock, Layout, Palette, Target
+  AlertCircle, Lock, Layout, Target
 } from 'lucide-react';
 
 const HelpView = ({ onNavigate, initialSection }) => {
@@ -64,7 +64,7 @@ const HelpView = ({ onNavigate, initialSection }) => {
                     <h4 className="font-bold text-gray-800">Design Customization</h4>
                   </div>
                   <div className="w-full h-48 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 border border-dashed border-gray-200">
-                    <Palette className="w-8 h-8 text-blue-200" />
+                    <Layout className="w-8 h-8 text-blue-200" />
                   </div>
                   <p className="text-sm text-gray-500">Customize Layout, Palette, Targets, colors, and button positions to match your branding perfectly.</p>
                </div>
