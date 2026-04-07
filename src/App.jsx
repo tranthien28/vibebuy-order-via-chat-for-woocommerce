@@ -83,31 +83,11 @@ const Sidebar = ({ activeTab, onNavigate, onUpgrade, settings }) => (
       </button>
     </nav>
     <div className="vb-sidebar-bottom">
-      {settings.is_pro ? (
-        <div className="mx-2 p-4 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden group">
-          <div className="absolute -right-4 -top-4 w-12 h-12 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all duration-700"></div>
-          <div className="flex items-center gap-3 relative z-10">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-              <ShieldCheck className="w-5 h-5 text-blue-400" />
-            </div>
-            <div>
-              <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none mb-1">PRO ACCOUNT</p>
-              <div className="flex items-center gap-1.5">
-                <p className="text-xs font-black text-white">Verified</p>
-                <div className="w-3.5 h-3.5 rounded-full bg-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                  <CheckCircle2 className="w-2.5 h-2.5 text-white" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="vb-upgrade-box text-center">
-          <p className="vb-upgrade-title">Go Pro</p>
-          <p className="vb-upgrade-desc">Unlock all channels & analytics</p>
-          <button onClick={onUpgrade} className="vb-upgrade-btn">Upgrade Now <ExternalLink className="w-3 h-3" /></button>
-        </div>
-      )}
+      <div className="vb-version-badge">
+        <div className="vb-version-dot" />
+        <span>VibeBuy</span>
+        <span className="vb-version-num">v1.0.3</span>
+      </div>
     </div>
   </aside>
 );
@@ -509,55 +489,6 @@ const App = () => {
                       )}
                     </div>
 
-                    {/* ─── Placement Settings Section (PRO Locked) ─── */}
-                    <div className={`p-8 border-t border-dashed transition-all ${!settings.is_pro ? 'bg-gray-50/30' : 'bg-blue-50/5'}`}>
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${settings.is_pro ? 'bg-blue-50 text-blue-500' : 'bg-gray-100 text-gray-400'}`}>
-                            <Share2 className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <h3 className="text-xs font-black uppercase text-gray-900 tracking-widest">Placement Setting</h3>
-                            <p className="text-[10px] text-gray-400 font-medium italic">Define how this channel interacts with the widget</p>
-                          </div>
-                        </div>
-                        {!settings.is_pro && (
-                          <div className="bg-amber-400 text-white px-2 py-0.5 rounded text-[8px] font-black shadow-sm uppercase tracking-tighter">
-                            PRO ONLY
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
-                          <div className="flex-1">
-                            <p className="text-sm font-bold text-gray-800 mb-1">Show as Floating Shortcut</p>
-                            <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
-                              {(editChannel === 'tiktok' || editChannel === 'instagram')
-                                ? 'TikTok and Instagram always use this mode to ensure compatibility.'
-                                : 'Enable this to show the icon as a secondary shortcut floating bar, skipping the lead form.'
-                              }
-                            </p>
-                          </div>
-                          <button
-                            disabled={!settings.is_pro}
-                            onClick={() => updateSetting(`${editChannel}_show_as_shortcut`, !settings[`${editChannel}_show_as_shortcut`])}
-                            className={`vb-toggle ${(settings[`${editChannel}_show_as_shortcut`] || editChannel === 'tiktok' || editChannel === 'instagram') ? 'vb-toggle--on' : 'vb-toggle--off'} ${!settings.is_pro ? 'grayscale opacity-50' : ''}`}
-                          >
-                            <div className={`vb-toggle-thumb ${(settings[`${editChannel}_show_as_shortcut`] || editChannel === 'tiktok' || editChannel === 'instagram') ? 'vb-toggle-thumb--on' : 'vb-toggle-thumb--off'}`} />
-                          </button>
-                        </div>
-
-                        {!settings.is_pro && (
-                          <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
-                            <Lock className="w-3.5 h-3.5 text-amber-500" />
-                            <p className="text-[10px] text-amber-800 font-bold italic">
-                              Upgrade to PRO to unlock shortcut bars and custom placement logic.
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
                   </div>
                 </div>
 

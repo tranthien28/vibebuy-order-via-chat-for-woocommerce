@@ -29,7 +29,7 @@ While other plugins look like 2010, VibeBuy sets a new standard with a stunning,
 
 == Installation ==
 
-1. Upload the `vibebuy-lite-order-connect` folder to the `/wp-content/plugins/` directory.
+1. Upload the `vibebuy-order-connect-lite` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Access the **VibeBuy Lite** menu to launch the React Dashboard.
 4. Set up your messaging handles and customize your "Quick Buy" widget in seconds.
