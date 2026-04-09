@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Save, Smartphone, Monitor, Palette, Eye, Check, Layout, Target, XCircle, CheckCircle, Lock, Plus, ExternalLink, Globe, ShoppingBag, Download, Share2, AlertCircle } from 'lucide-react';
+import { Save, Smartphone, Monitor, Palette, Eye, Check, Layout, Target, XCircle, CheckCircle, Lock, Plus, ExternalLink, Globe, ShoppingBag, Download, Share2, AlertCircle, MessageCircle } from 'lucide-react';
 import PreviewWidget from './PreviewWidget.jsx';
 
 const PRESET_COLORS = [
@@ -381,6 +381,92 @@ const GlobalSettingsView = ({ settings, updateSetting, handleSave, saving }) => 
                       />
                     </div>
                   )}
+                </div>
+              </div>
+            </section>
+
+            {/* 3.3 Global Contact Widget (PRO) */}
+            <section className={`space-y-6 p-6 rounded-3xl border transition-all ${!settings.is_pro ? 'border-dashed border-gray-200 bg-gray-50/30' : 'border-solid border-gray-100 bg-white shadow-sm'}`}>
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* Left: Info & Toggle */}
+                <div className="flex-1 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className={`p-1.5 rounded-lg ${settings.is_pro ? 'bg-indigo-50 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}>
+                        <MessageCircle className="w-4 h-4" />
+                      </div>
+                      <h3 className={`vb-section-title !m-0 ${settings.is_pro ? 'text-gray-900' : 'text-gray-500'}`}>
+                        {strings.floatingContact || 'Global Contact Widget'}
+                      </h3>
+                      {!settings.is_pro && <div className="vb-badge-pro">PRO</div>}
+                    </div>
+                    <button
+                      disabled={!settings.is_pro}
+                      onClick={() => updateSetting('floatingSocial_enabled', !settings.floatingSocial_enabled)}
+                      className={`vb-toggle ${settings.floatingSocial_enabled ? 'vb-toggle--on' : 'vb-toggle--off'} ${!settings.is_pro ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <div className={`vb-toggle-thumb ${settings.floatingSocial_enabled ? 'vb-toggle-thumb--on' : 'vb-toggle-thumb--off'}`} />
+                    </button>
+                  </div>
+
+                  <p className="text-[11px] text-gray-500 leading-relaxed">
+                    {strings.floatingContactDesc || 'Display a persistent contact menu across your entire site using your active channels. Perfect for Zalo, TikTok, and Instagram shortcuts.'}
+                  </p>
+
+                  <div className={`grid grid-cols-2 gap-3 transition-all ${!settings.is_pro || !settings.floatingSocial_enabled ? 'opacity-30 pointer-events-none' : ''}`}>
+                    <div className="space-y-1.5">
+                      <p className="vb-label-xs">Position</p>
+                      <select 
+                        value={settings.floatingSocial_position || 'bottom-right'} 
+                        onChange={(e) => updateSetting('floatingSocial_position', e.target.value)}
+                        className="vb-select-sm"
+                      >
+                        <option value="bottom-right">Bottom Right</option>
+                        <option value="bottom-left">Bottom Left</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <p className="vb-label-xs">Menu Style</p>
+                      <select 
+                        value={settings.floatingSocial_style || 'expanded'} 
+                        onChange={(e) => updateSetting('floatingSocial_style', e.target.value)}
+                        className="vb-select-sm"
+                      >
+                        <option value="expanded">List Menu</option>
+                        <option value="compact">Single Bubble</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Visual Shape Mockup */}
+                <div className="w-full md:w-48 h-32 bg-slate-900 rounded-2xl relative overflow-hidden border border-slate-800 shadow-inner group cursor-help">
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent" />
+                  
+                  {/* Mockup Screen Content */}
+                  <div className="absolute top-4 left-4 right-4 space-y-2 opacity-20">
+                    <div className="h-1.5 w-2/3 bg-white rounded-full" />
+                    <div className="h-1.5 w-full bg-white rounded-full" />
+                    <div className="h-1.5 w-1/2 bg-white rounded-full" />
+                  </div>
+
+                  {/* The Floating Widget Mockup */}
+                  <div className={`absolute transition-all duration-500 ${(settings.floatingSocial_position || 'bottom-right') === 'bottom-left' ? 'left-3' : 'right-3'} bottom-3 flex flex-col items-center gap-1.5`}>
+                    {/* Animated Bubbles (Simulating Expanded Style) */}
+                    <div className={`flex flex-col gap-1.5 transition-all duration-500 ${settings.floatingSocial_enabled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                      <div className="w-3.5 h-3.5 rounded-full bg-blue-400 animate-bounce" style={{animationDelay: '0.1s'}} />
+                      <div className="w-3.5 h-3.5 rounded-full bg-pink-500 animate-bounce" style={{animationDelay: '0.2s'}} />
+                      <div className="w-3.5 h-3.5 rounded-full bg-green-500 animate-bounce" style={{animationDelay: '0.3s'}} />
+                    </div>
+                    {/* Main Trigger */}
+                    <div className={`w-7 h-7 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110 ${settings.floatingSocial_enabled ? 'bg-indigo-600' : 'bg-slate-700'}`}>
+                      <MessageCircle className="w-3.5 h-3.5 text-white" />
+                    </div>
+                  </div>
+
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-black text-slate-500 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">
+                    Visual Preview
+                  </div>
                 </div>
               </div>
             </section>

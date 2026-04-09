@@ -101,6 +101,13 @@ class VibeBuy_Frontend {
 		$css_ver  = file_exists( $css_path ) ? filemtime( $css_path ) : VIBEBUY_VERSION;
 
 		wp_enqueue_style(
+			'vibebuy-google-fonts',
+			'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap',
+			array(),
+			VIBEBUY_VERSION
+		);
+
+		wp_enqueue_style(
 			'vibebuy-widget-tailwind-css',
 			VIBEBUY_PLUGIN_URL . 'assets/css/tailwind-utilities.css',
 			array(),
@@ -151,17 +158,26 @@ class VibeBuy_Frontend {
 		$is_pro             = vibebuy_is_pro();
 		$settings['is_pro'] = $is_pro;
 
-		// Enforce Lite limit: Only 1 active channel allowed
-		if ( ! $is_pro && isset( $settings['activeChannels'] ) && is_array( $settings['activeChannels'] ) && count( $settings['activeChannels'] ) > 1 ) {
-			$settings['activeChannels'] = array_slice( array_filter( $settings['activeChannels'] ), 0, 1 );
+		// Enforce Lite limits if Pro is NOT active
+		if ( ! $is_pro ) {
+			// 1. Disable Pro-only global toggles
+			$settings['floatingSocial_enabled'] = false;
+			$settings['loop_display_enabled']   = false;
+
+			// 2. Force only 1 active channel
+			if ( isset( $settings['activeChannels'] ) && is_array( $settings['activeChannels'] ) && count( $settings['activeChannels'] ) > 1 ) {
+				$settings['activeChannels'] = array_slice( array_filter( $settings['activeChannels'] ), 0, 1 );
+			}
 		}
 
 		$data = array(
 			'apiUrl'             => esc_url_raw( rest_url( 'vibebuy/v1/' ) ),
 			'nonce'              => wp_create_nonce( 'wp_rest' ),
+			'assetsUrl'          => VIBEBUY_PLUGIN_URL . 'assets/',
 			'settings'           => $settings,
 			'currentUser'        => $user_data,
 			'submittedInquiries' => VibeBuy_DB::get_user_submission_map( get_current_user_id() ),
+			'channels'           => $this->get_channels_data( $is_pro ),
 			'strings'            => array(
 				'alreadyRequested'  => __( 'Already Requested', 'vibebuy-order-via-chat-for-woocommerce' ),
 				'orderViaWhatsApp'  => __( 'Order via WhatsApp', 'vibebuy-order-via-chat-for-woocommerce' ),
@@ -194,6 +210,29 @@ class VibeBuy_Frontend {
 		$data = apply_filters( 'vibebuy_localize_frontend_data', $data );
 
 		wp_localize_script( 'vibebuy-widget-js', 'vibebuyWidgetData', $data );
+	}
+
+	/**
+	 * Get formatted data for all registered channels.
+	 */
+	private function get_channels_data( $is_pro ) {
+		$channels = VibeBuy_Channel_Registry::all();
+		$data     = array();
+
+		foreach ( $channels as $channel ) {
+			// Safety: Skip pro channels if we are in Lite mode
+			if ( ! $is_pro && $channel->is_pro() ) {
+				continue;
+			}
+
+			$data[] = array(
+				'id'     => $channel->get_id(),
+				'name'   => $channel->get_name(),
+				'is_pro' => $channel->is_pro(),
+			);
+		}
+
+		return apply_filters( 'vibebuy_localize_channels_data', $data );
 	}
 
 	/**

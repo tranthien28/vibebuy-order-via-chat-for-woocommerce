@@ -30,7 +30,7 @@ class VibeBuy_Admin
 	{
 		wp_enqueue_style(
 			'vibebuy-google-fonts',
-			'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
+			'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap',
 			array(),
 			VIBEBUY_VERSION
 		);
@@ -158,6 +158,12 @@ class VibeBuy_Admin
 			'branding' => __('Branding Settings', 'vibebuy-order-via-chat-for-woocommerce'),
 			'removeBranding' => __('Hide "Powered by VibeBuy" label', 'vibebuy-order-via-chat-for-woocommerce'),
 			'createOrder' => __('Create WooCommerce Order', 'vibebuy-order-via-chat-for-woocommerce'),
+			'floatingContact' => __('Global Contact Widget', 'vibebuy-order-via-chat-for-woocommerce'),
+			'floatingContactDesc' => __('Display a persistent contact menu across your entire site using your active channels.', 'vibebuy-order-via-chat-for-woocommerce'),
+			'enableFloating' => __('Enable Site-wide Widget', 'vibebuy-order-via-chat-for-woocommerce'),
+			'widgetStyle' => __('Widget Style', 'vibebuy-order-via-chat-for-woocommerce'),
+			'expanded' => __('List Menu', 'vibebuy-order-via-chat-for-woocommerce'),
+			'compact' => __('Single Bubble', 'vibebuy-order-via-chat-for-woocommerce'),
 		);
 	}
 }

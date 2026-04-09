@@ -384,57 +384,74 @@ const InlineChatButtons = ({ settings, productData, manualData }) => {
 
 const FloatingBubble = ({ settings, productData }) => {
   const { isModalOpen, triggerAction, handleModalSubmit, handleModalClose, hasSubmitted } = useOrderFlow(settings, 'global', productData, null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const activeChannels = settings.activeChannels || [];
-  const shortcutChannels = activeChannels.filter(id => settings[`${id}_show_as_shortcut`] || id === 'tiktok' || id === 'instagram');
-  const leadChannels = activeChannels.filter(id => !shortcutChannels.includes(id));
+  
+  // Channels that should open directly (Social)
+  const socialChannels = activeChannels.filter(id => 
+    id === 'zalo' || id === 'tiktok' || id === 'instagram' || id === 'messenger' || id === 'viber' || id === 'line' || id === 'custom' || id === 'contact'
+  );
+  
+  // Channels that follow the Order Flow (WhatsApp, Telegram, Discord)
+  const orderChannels = activeChannels.filter(id => !socialChannels.includes(id));
 
-  const showShortcutBar = settings.floatingSocial_enabled && shortcutChannels.length > 0;
-  const showMainBubble = leadChannels.length > 0 || !showShortcutBar; // Always show bubble if no shortcuts
+  // Determine if we should show site-wide
+  const isProductPage = !!productData;
+  const isGlobalEnabled = settings.floatingSocial_enabled && settings.is_pro;
+  
+  // If not a product page and global contact is disabled, hide everything
+  if (!isProductPage && !isGlobalEnabled) return null;
+  if (!checkVisibility(settings, productData)) return null;
 
-  const customBgColor = settings.backgroundColor || '#22c55e';
-  const customRadius = settings.borderRadius !== undefined ? `${settings.borderRadius}px` : '999px';
-  const hasText = settings.buttonText && settings.buttonText.trim() !== '';
   const position = settings.floatingSocial_position || 'bottom-right';
   const isLeft = position === 'bottom-left';
- 
-   if (!checkVisibility(settings, productData)) return null;
- 
-   return (
-     <>
-      {showShortcutBar && settings.is_pro && (
+  const customBgColor = settings.backgroundColor || '#6366f1';
+  const customRadius = settings.borderRadius !== undefined ? `${settings.borderRadius}px` : '999px';
+
+  const handleMainClick = (e) => {
+    if (isGlobalEnabled && settings.floatingSocial_style === 'expanded') {
+      setIsMenuOpen(!isMenuOpen);
+    } else {
+      triggerAction(e);
+    }
+  };
+
+  return (
+    <>
+      {(isMenuOpen || (isGlobalEnabled && settings.floatingSocial_style === 'expanded' && !isProductPage)) && (
         <SocialShortcutBar 
           settings={settings} 
-          channels={shortcutChannels} 
+          channels={socialChannels} 
           position={position}
           productData={productData}
         />
       )}
 
-      {showMainBubble && (
+      <div 
+        className={`fixed bottom-6 z-[9999] flex flex-col items-end font-sans transition-all duration-300 ${isLeft ? 'left-6' : 'right-6'}`}
+      >
         <div 
-          className={`fixed bottom-6 z-[9999] flex flex-col items-end font-sans transition-all duration-300 ${isLeft ? 'left-6' : 'right-6'}`}
+          className={`flex items-center justify-center shadow-xl cursor-pointer transform hover:scale-105 active:scale-95 transition-all text-white ${isProductPage && settings.buttonText ? 'px-5 py-3 gap-3' : 'w-14 h-14'}`}
+          style={{ 
+            backgroundColor: isProductPage ? customBgColor : (settings.floatingSocial_color || '#6366f1'),
+            borderRadius: customRadius,
+          }}
+          onClick={handleMainClick}
         >
-          <div 
-            className={`flex items-center justify-center shadow-xl cursor-pointer transform hover:scale-105 transition-all text-white ${hasText ? 'px-5 py-3 gap-3' : 'w-14 h-14'}`}
-            style={{ 
-              backgroundColor: customBgColor,
-              borderRadius: customRadius,
-            }}
-            onClick={(e) => triggerAction(e)}
-          >
-             {settings.buttonIconUrl ? (
-                <img src={settings.buttonIconUrl} alt="Custom Agent Avatar" className="w-6 h-6 object-cover rounded-full shadow-sm" />
+           {isMenuOpen ? <X className="w-6 h-6" /> : (
+             settings.buttonIconUrl ? (
+                <img src={settings.buttonIconUrl} alt="Icon" className="w-6 h-6 object-cover rounded-full shadow-sm" />
              ) : (
                 <MessageCircle className="w-6 h-6 fill-current" />
-             )}
+             )
+           )}
 
-             {hasText && (
-                <span className="font-bold whitespace-nowrap">{settings.buttonText}</span>
-             )}
-          </div>
+           {isProductPage && settings.buttonText && !isMenuOpen && (
+              <span className="font-bold whitespace-nowrap">{settings.buttonText}</span>
+           )}
         </div>
-      )}
+      </div>
 
       <OrderModal 
         isOpen={isModalOpen}

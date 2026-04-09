@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronLeft, ChevronRight, MessageCircle, User, Mail, Calendar, ExternalLink, ShoppingCart, Download, Lock, Globe } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, MessageCircle, User, Mail, Calendar, ExternalLink, ShoppingCart, Download, Lock, Globe, Eye, UserCheck } from 'lucide-react';
 
 const ConversationsView = ({ onViewDetail, settings, onUpgrade }) => {
   const [connections, setConnections] = useState([]);
@@ -73,12 +73,12 @@ const ConversationsView = ({ onViewDetail, settings, onUpgrade }) => {
             <p className="vb-section-subtitle">Realtime archive of messaging connection requests.</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <div className="relative group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10 pointer-events-none group-focus-within:text-blue-500 transition-colors" />
               <input 
                 type="text" 
                 placeholder="Filter leads..." 
-                className="vb-input !w-64 pl-10"
+                className="vb-input !w-64 pl-12"
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPaged(1); }}
               />
@@ -101,22 +101,6 @@ const ConversationsView = ({ onViewDetail, settings, onUpgrade }) => {
           </div>
         </div>
 
-        {/* 2. Pro/Lite Storage Banner */}
-        {!settings?.is_pro && (
-          <div className="mx-8 mt-8 p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-[20px] flex items-center gap-5 shadow-sm">
-            <div className="w-11 h-11 rounded-2xl bg-amber-400 flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-200/50">
-                <Lock className="w-5 h-5" />
-            </div>
-            <div className="flex-1">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <p className="text-[11px] font-black text-amber-900 uppercase tracking-tight">Lite Version Limit</p>
-                  <span className="vb-badge-pro">10 INQUIRIES MAX</span>
-                </div>
-                <p className="text-[11px] text-amber-800/70 font-bold leading-relaxed italic">Upgrade to Pro for unlimited storage and full history.</p>
-            </div>
-            <button onClick={onUpgrade} className="px-5 py-2 bg-amber-500 text-white text-[10px] font-black uppercase rounded-xl hover:bg-amber-600 transition-all shadow-md">Upgrade Now</button>
-          </div>
-        )}
 
         <div className="transition-all duration-300">
           {loading ? (
@@ -140,69 +124,88 @@ const ConversationsView = ({ onViewDetail, settings, onUpgrade }) => {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-50/50 border-b border-slate-100">
-                      <th className="vb-label border-b border-gray-50 px-8 py-5 text-left bg-gray-50/30 font-black">Target Item</th>
-                      <th className="vb-label border-b border-gray-50 px-4 py-5 text-left bg-gray-50/30 font-black">Customer</th>
-                      <th className="vb-label border-b border-gray-50 px-4 py-5 text-left bg-gray-50/30 font-black">Channel</th>
-                      <th className="vb-label border-b border-gray-50 px-4 py-5 text-left bg-gray-50/30 font-black">Timestamp</th>
-                      <th className="vb-label border-b border-gray-50 px-8 py-5 text-right bg-gray-50/30 font-black">Action</th>
+                      <th className="vb-label border-b border-gray-50 px-6 py-3 text-left bg-gray-50/30 font-bold text-[11px] uppercase tracking-wider">Customer</th>
+                      <th className="vb-label border-b border-gray-50 px-6 py-3 text-left bg-gray-50/30 font-bold text-[11px] uppercase tracking-wider">Order</th>
+                      <th className="vb-label border-b border-gray-50 px-6 py-3 text-left bg-gray-50/30 font-bold text-[11px] uppercase tracking-wider">Product</th>
+                      <th className="vb-label border-b border-gray-50 px-6 py-3 text-left bg-gray-50/30 font-bold text-[11px] uppercase tracking-wider">User ID</th>
+                      <th className="vb-label border-b border-gray-50 px-6 py-3 text-left bg-gray-50/30 font-bold text-[11px] uppercase tracking-wider">Date</th>
+                      <th className="vb-label border-b border-gray-50 px-6 py-3 text-right bg-gray-50/30 font-bold text-[11px] uppercase tracking-wider">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {connections.map((item) => (
                       <tr key={item.id} className="hover:bg-blue-50/20 transition-all group">
-                        <td className="px-8 py-5">
-                          <div className="flex items-center gap-4">
-                            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center font-black text-sm shadow-md shadow-blue-200 group-hover:scale-110 transition-transform">
+                        <td className="px-6 py-1.5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center font-black text-[10px] shadow-sm group-hover:scale-105 transition-transform">
                               {item.customer_name.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <p className="text-sm font-black text-slate-900 leading-tight mb-1">{item.customer_name}</p>
-                              <p className="text-[11px] text-slate-400 font-bold flex items-center gap-1.5"><Mail className="w-3 h-3 text-slate-300" /> {item.customer_email}</p>
-                              {item.order_id > 0 && (
-                                <div className="mt-2">
-                                  <span className="bg-blue-100 text-blue-700 text-[9px] font-black px-2 py-0.5 rounded-lg border border-blue-200 uppercase tracking-tighter flex items-center gap-1 w-fit shadow-xs">
-                                    <ShoppingCart className="w-3 h-3" /> Order #{item.order_id}
-                                  </span>
-                                </div>
-                              )}
+                              <p className="text-[11px] font-semibold text-slate-900 leading-none mb-1.5">{item.customer_name}</p>
+                              <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1"><Mail className="w-2.5 h-2.5 text-slate-300" /> {item.customer_email}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-8 py-5">
-                          <div className="max-w-[200px]">
-                            <p className="text-xs font-black text-slate-700 truncate leading-tight group-hover:text-blue-600 transition-colors">
+                        <td className="px-6 py-1.5">
+                          {item.order_id > 0 ? (
+                            <a 
+                              href={`${window.vibebuyData.homeUrl}wp-admin/post.php?post=${item.order_id}&action=edit`} 
+                              target="_blank" 
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-100 hover:bg-emerald-100 transition-colors shadow-xs"
+                              title="View WooCommerce Order"
+                            >
+                              <ShoppingCart className="w-3 h-3" />
+                              #{item.order_id}
+                              <ExternalLink className="w-2.5 h-2.5 opacity-50" />
+                            </a>
+                          ) : (
+                            <span className="text-[10px] font-bold text-slate-300 italic opacity-50">—</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-1.5">
+                          <div className="max-w-[180px]">
+                            <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight group-hover:text-blue-600 transition-colors">
                               {item.product_title || `ID: #${item.product_id}`}
                             </p>
-                            <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-tight opacity-70">
+                            <p className="text-[9px] text-slate-400 font-medium mt-0.5 uppercase tracking-tight opacity-70">
                               {item.product_qty ? `${item.product_qty} unit(s)` : 'Contextual Lead'}
                             </p>
                           </div>
                         </td>
-                        <td className="px-8 py-5">
-                          <span className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border shadow-xs ${
-                            item.channel_id === 'whatsapp' 
-                              ? 'bg-green-50 text-green-600 border-green-100' 
-                              : 'bg-blue-50 text-blue-600 border-blue-100'
-                          }`}>
-                            {item.channel_id}
-                          </span>
+                        <td className="px-6 py-1.5">
+                          {item.is_user ? (
+                            <a 
+                              href={`${window.vibebuyData.homeUrl}wp-admin/user-edit.php?user_id=${item.user_id}`} 
+                              target="_blank" 
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50 text-blue-600 text-[9px] font-black uppercase ring-1 ring-blue-100 hover:bg-blue-100 transition-colors shadow-xs"
+                              title="View User Profile"
+                            >
+                              <User className="w-3 h-3" />
+                              ID: {item.user_id}
+                              <ExternalLink className="w-2 h-2 opacity-50" />
+                            </a>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-slate-50 text-slate-400 text-[9px] font-black uppercase ring-1 ring-slate-200 opacity-60">
+                              Guest
+                            </span>
+                          )}
                         </td>
-                        <td className="px-8 py-5">
-                          <div className="max-w-[180px]">
-                            <p className="text-[11px] text-slate-500 line-clamp-2 italic leading-relaxed">
-                              {item.customer_message ? `"${item.customer_message}"` : 'No custom message added...'}
-                            </p>
-                            <p className="text-[9px] font-bold text-slate-300 mt-2 flex items-center gap-1">
-                              <Calendar className="w-3 h-3" /> {item.formatted_date}
+                        <td className="px-6 py-1.5">
+                          <div className="max-w-[160px]">
+                            <p className="text-[11px] font-semibold text-slate-500 whitespace-nowrap">
+                              {item.formatted_date}
                             </p>
                           </div>
                         </td>
-                        <td className="px-8 py-5 text-right">
+                        <td className="px-6 py-1.5 text-right">
                           <button 
                             onClick={() => onViewDetail(item.id)}
-                            className="px-5 py-2.5 bg-slate-900 text-white text-[10px] font-black rounded-2xl hover:bg-black hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-lg shadow-slate-200 uppercase tracking-widest"
+                            className="p-2 bg-white text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm group-hover:shadow-md active:scale-95"
+                            title="View Lead Details"
                           >
-                            Analyze Lead
+                            <Eye className="w-4 h-4" />
                           </button>
                         </td>
                       </tr>
@@ -212,12 +215,12 @@ const ConversationsView = ({ onViewDetail, settings, onUpgrade }) => {
               </div>
 
               {/* Pagination Footer Gated for LITE */}
-              <div className={`px-8 py-6 bg-slate-50/80 flex items-center justify-between border-t border-slate-100 relative ${!settings?.is_pro ? 'opacity-60 grayscale' : ''}`}>
+              <div className={`px-6 py-4 bg-slate-50/80 flex items-center justify-between border-t border-slate-100 relative ${!settings?.is_pro ? 'opacity-60 grayscale' : ''}`}>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    Showing {connections.length} <span className="opacity-40">/</span> {totalItems} Inquiries
+                    Showing {connections.length} / {totalItems} Inquiries
                     {!settings?.is_pro && (
-                      <span className="vb-badge-pro ml-2">
-                         LITE LIMIT REACHED
+                      <span className="text-amber-500 font-black ml-1.5 flex items-center gap-1">
+                        <Lock className="w-3 h-3" /> LITE LIMIT REACHED TO 10
                       </span>
                     )}
                 </p>

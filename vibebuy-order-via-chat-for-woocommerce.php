@@ -101,17 +101,20 @@ register_activation_hook(__FILE__, array('VibeBuy_DB', 'create_table'));
 if (!function_exists('vibebuy_is_pro')) {
 	/**
 	 * Centralized check for Pro status.
-	 * Allows Lite to remain clean while Pro hooks in to unlock features.
+	 * Requires BOTH the Pro Expansion Plugin and a Valid License.
 	 */
 	function vibebuy_is_pro()
 	{
 		static $is_pro = null;
 		if (null === $is_pro) {
 			$is_pro = false;
-			// DOUBLE-LOCK: Only return true if BOTH the license is active 
-			// AND the VibeBuy PRO expansion plugin is currently active.
-			if (class_exists('VibeBuy_License')) {
-				$is_pro = VibeBuy_License::is_pro() && vibebuy_is_pro_installed();
+			
+			// Step 1: Check if the Pro Expansion plugin is installed and active
+			$pro_plugin_active = vibebuy_is_pro_installed();
+			
+			// Step 2: Check if the Lite version has an active Pro License
+			if ($pro_plugin_active && class_exists('VibeBuy_License')) {
+				$is_pro = VibeBuy_License::is_pro();
 			}
 		}
 
@@ -121,14 +124,11 @@ if (!function_exists('vibebuy_is_pro')) {
 
 if (!function_exists('vibebuy_is_pro_installed')) {
 	/**
-	 * Check if Pro plugin is present (regardless of license status).
+	 * Check if the Pro add-on plugin is present.
+	 * The Pro plugin should hook into 'vibebuy_is_pro_installed' and return true.
 	 */
 	function vibebuy_is_pro_installed()
 	{
-		static $is_installed = null;
-		if (null === $is_installed) {
-			$is_installed = apply_filters('vibebuy_is_pro_installed', false);
-		}
-		return $is_installed;
+		return apply_filters('vibebuy_is_pro_installed', false);
 	}
 }

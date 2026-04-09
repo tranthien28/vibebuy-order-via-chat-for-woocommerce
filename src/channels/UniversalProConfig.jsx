@@ -98,6 +98,23 @@ const UniversalProConfig = ({ channel, settings, updateSetting, onNavigate }) =>
          </div>
       </div>
 
+      {/* 3.5 Custom Message Template (NEW) */}
+      <div className="p-6 bg-white rounded-3xl border border-gray-100 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h4 className="text-[11px] font-black uppercase text-gray-900 tracking-widest">Custom Message Template</h4>
+            <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">Override the global message for this specific channel.</p>
+          </div>
+          <div className="px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[8px] font-black uppercase tracking-tighter">Pro Feature</div>
+        </div>
+
+        <MessageTemplateEditor 
+          value={get('message_template')}
+          onChange={val => updateSetting(`${prefix}message_template`, val)}
+          placeholder="Hi! I want to order {{product_name}}..."
+        />
+      </div>
+
       {/* 4. Pro Exclusives (Unlocked) */}
       <div className="p-6 bg-blue-50/50 rounded-[40px] border border-blue-100/50 relative overflow-hidden group">
          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform duration-700">

@@ -86,10 +86,29 @@ class VibeBuy_Channel_Registry {
 		];
 
 		foreach ( self::$channels as $channel ) {
-			$schema = array_merge( $schema, $channel->get_settings_schema() );
+			$schema = array_merge( 
+				$schema, 
+				$channel->get_base_schema(), // Adds {id}_enabled and {id}_show_in_widget
+				$channel->get_settings_schema() 
+			);
 		}
 
 		return $schema;
+	}
+
+	/**
+	 * Get capabilities for all channels.
+	 * (Whether they support notifications or are pro)
+	 */
+	public static function get_capabilities(): array {
+		$caps = array();
+		foreach ( self::$channels as $channel ) {
+			$caps[ $channel->get_id() ] = array(
+				'is_pro'                 => $channel->is_pro(),
+				'supports_notifications' => $channel->supports_notifications(),
+			);
+		}
+		return $caps;
 	}
 
 	/**

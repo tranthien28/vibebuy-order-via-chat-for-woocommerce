@@ -114,16 +114,33 @@ class VibeBuy_API
 			'orderModal_autoOff' => true,
 			'floatingSocial_enabled' => false,
 			'floatingSocial_position' => 'bottom-right',
+			'floatingSocial_style' => 'expanded',
+			'floatingSocial_mobile' => true,
+			'floatingSocial_desktop' => true,
 			'buttonText' => 'Chat with us',
 			'order_creation_enabled' => true,
 			'order_creation_status' => 'pending',
 			'loop_display_enabled' => false,
 		);
 		$settings = get_option('vibebuy_lite_settings', array());
-		$settings['totalConnections'] = VibeBuy_DB::get_total_connections_count();
+		
+		// 1. Force Pro status check
+		$is_pro = vibebuy_is_pro();
+		$settings['is_pro'] = $is_pro;
 
+		// 2. Enforce Lite Limits (If Pro is deactivated, trim to 1 channel)
+		if (!$is_pro) {
+			$active = array_values(array_filter($settings['activeChannels'] ?? []));
+			if (count($active) > 1) {
+				$settings['activeChannels'] = array_slice($active, 0, 1);
+			}
+			// Disable Pro-only features
+			$settings['floatingSocial_enabled'] = false;
+			$settings['loop_display_enabled'] = false;
+		}
+
+		$settings['totalConnections'] = VibeBuy_DB::get_total_connections_count();
 		$settings['activeChannels'] = array_values($settings['activeChannels'] ?? []);
-		$settings['is_pro'] = vibebuy_is_pro();
 		$settings['license_key'] = get_option('vibebuy_license_key', '');
 
 		// Load available WC statuses
@@ -410,13 +427,21 @@ class VibeBuy_API
 	 * Render the message template with actual data.
 	 * 
 	 * @param array $data
+	 * @param string $channel_id The ID of the current channel.
 	 * @return string Rendered message.
 	 */
-	private function render_template_message($data)
+	private function render_template_message($data, $channel_id = 'global')
 	{
 		$settings = get_option('vibebuy_lite_settings', array());
-		$template = !empty($settings['global_message_template']) ? $settings['global_message_template'] : "Admin! 🛒 New Product Inquiry!\nCustomer: {{full_name}}\nPhone: {{phone}}\nProduct: {{product_name}}\nID: {{product_id}}\nSKU: {{product_sku}}\nQuantity: {{product_qty}}\nPrice: {{product_price}}\nLink: {{product_url}}\n---\nVibeBuy connect\n---";
-
+		$is_pro   = vibebuy_is_pro();
+		
+		// Priority: Channel-specific template (PRO ONLY) -> Global Template -> Default
+		$template = '';
+		if ($is_pro && !empty($channel_id) && !empty($settings[$channel_id . '_message_template'])) {
+			$template = $settings[$channel_id . '_message_template'];
+		} else {
+			$template = !empty($settings['global_message_template']) ? $settings['global_message_template'] : "Admin! 🛒 New Product Inquiry!\nCustomer: {{full_name}}\nPhone: {{phone}}\nProduct: {{product_name}}\nID: {{product_id}}\nSKU: {{product_sku}}\nQuantity: {{product_qty}}\nPrice: {{product_price}}\nLink: {{product_url}}\n---\nVibeBuy connect\n---";
+		}
 		$product_name = 'N/A';
 		$product_sku = 'N/A';
 		$product_price = 'N/A';

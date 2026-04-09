@@ -66,26 +66,48 @@ const ConfigStep = ({ channel, settings, updateSetting, onNavigate }) => {
           Message Template
         </label>
         <div className="space-y-3">
-          <label className="flex items-center gap-4 p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/30 ring-4 ring-blue-50/20 shadow-sm cursor-pointer transition-all active:scale-[0.98]">
-            <div className={`w-4 h-4 rounded-full border-2 border-blue-600 flex items-center justify-center shadow-[0_0_8px_rgba(59,130,246,0.4)]`}>
-              <div className="w-2 h-2 rounded-full bg-blue-500" />
+          <label 
+            onClick={() => updateSetting(`${prefix}template_mode`, 'global')}
+            className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer ${get('template_mode', 'global') === 'global' ? 'border-blue-600 bg-blue-50/30 ring-4 ring-blue-50/20 shadow-sm' : 'border-gray-100 bg-white opacity-60'}`}
+          >
+            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${get('template_mode', 'global') === 'global' ? 'border-blue-600' : 'border-gray-300'}`}>
+              {get('template_mode', 'global') === 'global' && <div className="w-2 h-2 rounded-full bg-blue-500" />}
             </div>
             <div className="flex-1">
-              <p className="text-[11px] font-black text-blue-700 uppercase tracking-tight">Use Global Template</p>
-              <p className="text-[10px] text-blue-600/70 font-bold uppercase mt-0.5">Sync with main settings</p>
+              <p className={`text-[11px] font-black uppercase tracking-tight ${get('template_mode', 'global') === 'global' ? 'text-blue-700' : 'text-gray-500'}`}>Use Global Template</p>
+              <p className="text-[10px] text-gray-400 font-bold uppercase mt-0.5">Sync with main settings</p>
             </div>
-            <Check className="w-5 h-5 text-blue-600" strokeWidth={3} />
+            {get('template_mode', 'global') === 'global' && <Check className="w-5 h-5 text-blue-600" strokeWidth={3} />}
           </label>
 
-          <div className="flex items-center gap-4 p-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 opacity-60 grayscale cursor-not-allowed">
-            <div className="w-4 h-4 rounded-full border-2 border-slate-300" />
-            <div className="flex-1">
-              <p className="text-[11px] font-black text-slate-500 uppercase tracking-tight">Channel Override</p>
-              <p className="text-[10px] text-slate-400 font-black uppercase mt-0.5">Custom template for {channel.name}</p>
+          <div 
+            onClick={() => settings.is_pro && updateSetting(`${prefix}template_mode`, 'custom')}
+            className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${!settings.is_pro ? 'border-dashed border-slate-200 bg-slate-50/50 opacity-60 grayscale cursor-not-allowed' : 'cursor-pointer'} ${get('template_mode') === 'custom' ? 'border-indigo-600 bg-indigo-50/30 ring-4 ring-indigo-50/20 shadow-sm' : 'border-gray-100 bg-white opacity-60'}`}
+          >
+            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${get('template_mode') === 'custom' ? 'border-indigo-600' : 'border-gray-300'}`}>
+              {get('template_mode') === 'custom' && <div className="w-2 h-2 rounded-full bg-indigo-500" />}
             </div>
-            <span className="bg-amber-400 text-white text-[9px] font-black px-2 py-1 rounded-lg shadow-sm">PRO</span>
+            <div className="flex-1">
+              <p className={`text-[11px] font-black uppercase tracking-tight ${get('template_mode') === 'custom' ? 'text-indigo-700' : 'text-gray-500'}`}>Channel Override</p>
+              <p className="text-[10px] text-gray-400 font-black uppercase mt-0.5">Custom template for {channel.name}</p>
+            </div>
+            {!settings.is_pro ? (
+              <span className="bg-amber-400 text-white text-[9px] font-black px-2 py-1 rounded-lg shadow-sm uppercase">PRO</span>
+            ) : (
+              get('template_mode') === 'custom' && <Check className="w-5 h-5 text-indigo-600" strokeWidth={3} />
+            )}
           </div>
         </div>
+
+        {settings.is_pro && get('template_mode') === 'custom' && (
+          <div className="mt-4 p-4 bg-indigo-50/30 border border-indigo-100 rounded-2xl animate-in slide-in-from-top-2">
+             <MessageTemplateEditor 
+                value={get('message_template')}
+                onChange={val => updateSetting(`${prefix}message_template`, val)}
+                placeholder="Hi! I want to order {{product_name}} via WhatsApp..."
+             />
+          </div>
+        )}
       </div>
 
 

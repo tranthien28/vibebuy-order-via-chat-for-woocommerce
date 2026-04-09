@@ -86,6 +86,27 @@ abstract class VibeBuy_Channel_Base {
 	}
 
 	/**
+	 * Does this channel support server-side notifications?
+	 * (e.g. Telegram Bot, WhatsApp API)
+	 * Defaults to false for social shortcuts.
+	 */
+	public function supports_notifications(): bool {
+		return false;
+	}
+
+	/**
+	 * Get the base settings schema for EVERY channel.
+	 */
+	public function get_base_schema(): array {
+		$id = $this->get_id();
+		return [
+			"{$id}_enabled"          => 'rest_sanitize_boolean',
+			"{$id}_show_in_widget"   => 'rest_sanitize_boolean',
+			"{$id}_message_template" => 'sanitize_textarea_field',
+		];
+	}
+
+	/**
 	 * Retrieve a specific setting value for this channel.
 	 * Uses namespaced key: {channel_id}_{field}
 	 * @param array $settings Full settings array

@@ -160,28 +160,51 @@ const ConfigStep = ({ channel, settings, updateSetting, onNavigate }) => {
           Message Template
         </label>
         <div className="space-y-3">
-          <label className="flex items-center gap-3 p-3 rounded-xl border-2 border-green-500 bg-green-50 cursor-pointer">
-            <div className="w-4 h-4 rounded-full border-2 border-green-500 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-green-500" />
+          <label 
+            onClick={() => updateSetting(`${prefix}template_mode`, 'global')}
+            className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer ${get('template_mode', 'global') === 'global' ? 'border-green-500 bg-green-50' : 'border-gray-100 bg-white opacity-60'}`}
+          >
+            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${get('template_mode', 'global') === 'global' ? 'border-green-500' : 'border-gray-300'}`}>
+              {get('template_mode', 'global') === 'global' && <div className="w-2 h-2 rounded-full bg-green-500" />}
             </div>
             <div className="flex-1">
-              <p className="text-sm font-bold text-green-700">Use Global Template</p>
-              <p className="text-[11px] text-green-600/70">Applies the template from the Message Templates menu</p>
+              <p className={`text-sm font-bold ${get('template_mode', 'global') === 'global' ? 'text-green-700' : 'text-gray-500'}`}>Use Global Template</p>
+              <p className="text-[11px] text-gray-400">Applies the template from main settings</p>
             </div>
-            <Check className="w-4 h-4 text-green-500" />
+            {get('template_mode', 'global') === 'global' && <Check className="w-4 h-4 text-green-500" />}
           </label>
 
-          <div className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-gray-200 bg-gray-50/50 grayscale opacity-60 cursor-not-allowed">
-            <div className="w-4 h-4 rounded-full border-2 border-gray-300" />
+          <div 
+            onClick={() => settings.is_pro && updateSetting(`${prefix}template_mode`, 'custom')}
+            className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${!settings.is_pro ? 'border-dashed border-gray-200 bg-gray-50/50 grayscale opacity-60 cursor-not-allowed' : 'cursor-pointer'} ${get('template_mode') === 'custom' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-100 bg-white opacity-60'}`}
+          >
+            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${get('template_mode') === 'custom' ? 'border-indigo-500' : 'border-gray-300'}`}>
+              {get('template_mode') === 'custom' && <div className="w-2 h-2 rounded-full bg-indigo-500" />}
+            </div>
             <div className="flex-1">
-              <p className="text-sm font-bold text-gray-600">Custom for Telegram</p>
+              <p className={`text-sm font-bold ${get('template_mode') === 'custom' ? 'text-indigo-700' : 'text-gray-500'}`}>Custom for Telegram</p>
               <p className="text-[11px] text-gray-400">Override global template for this channel</p>
             </div>
-            <span className="bg-amber-400 text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-sm">PRO</span>
+            {!settings.is_pro ? (
+              <span className="bg-amber-400 text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-sm">PRO</span>
+            ) : (
+              get('template_mode') === 'custom' && <Check className="w-4 h-4 text-indigo-500" />
+            )}
           </div>
         </div>
+
+        {settings.is_pro && get('template_mode') === 'custom' && (
+          <div className="mt-4 p-4 bg-indigo-50/30 border border-indigo-100 rounded-2xl animate-in slide-in-from-top-2">
+             <MessageTemplateEditor 
+                value={get('message_template')}
+                onChange={val => updateSetting(`${prefix}message_template`, val)}
+                placeholder="Hi! I want to order {{product_name}} via Telegram..."
+             />
+          </div>
+        )}
+
         <p className="text-[11px] text-gray-400 mt-3 italic">
-          Go to <span className="font-bold">Message Templates</span> in the sidebar to edit the content.
+          Go to <span className="font-bold">Message Templates</span> in the sidebar to edit the global content.
         </p>
       </div>
 
