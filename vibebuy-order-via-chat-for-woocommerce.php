@@ -8,7 +8,7 @@
  * Author URI:  https://github.com/tranthien28
  * License:     GPL-2.0+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: vibebuy-order-connect-lite
+ * Text Domain: vibebuy-order-via-chat-for-woocommerce
  *
  * @package VibeBuy
  */
@@ -60,7 +60,7 @@ function vibebuy_init()
 function vibebuy_plugin_action_links($links)
 {
 	if (!vibebuy_is_pro()) {
-		$get_pro_link = '<a href="https://vibebuy.lemonsqueezy.com/checkout/buy/873a7dcf-83e1-4893-b5ed-df7009298e2d?logo=0" target="_blank" style="color: #6366f1; font-weight: bold;">' . __('Get Pro', 'vibebuy-order-connect-lite') . '</a>';
+		$get_pro_link = '<a href="https://vibebuy.lemonsqueezy.com/checkout/buy/873a7dcf-83e1-4893-b5ed-df7009298e2d?logo=0" target="_blank" style="color: #6366f1; font-weight: bold;">' . __('Get Pro', 'vibebuy-order-via-chat-for-woocommerce') . '</a>';
 		array_unshift($links, $get_pro_link);
 	}
 	return $links;

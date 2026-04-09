@@ -159,6 +159,11 @@ const AnalyticsView = ({ settings }) => {
                 return points.map((p, i) => {
                   const count = p.count || 0;
                   if (count === 0) return null;
+                  
+                  if (count === total) {
+                    return <circle key={i} cx="0" cy="0" r="1.0" fill={p.color} className="transition-all duration-300 hover:opacity-80" />;
+                  }
+
                   const startPercent = cumulativePercent;
                   const endPercent = cumulativePercent + (count / total);
                   cumulativePercent = endPercent;
@@ -179,7 +184,7 @@ const AnalyticsView = ({ settings }) => {
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <span className="text-xl font-black text-slate-900 leading-none">
-            {total > 0 ? (Math.round((points.find(p => p.label === 'Afternoon')?.count || 0) / total * 100) || 0) : 0}%
+            {total > 0 ? Math.round(Math.max(...points.map(p => p.count || 0)) / total * 100) : 0}%
           </span>
           <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">Peak</span>
         </div>
@@ -309,6 +314,7 @@ const AnalyticsView = ({ settings }) => {
                         <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: h.color }} />
                         <div className="min-w-0">
                            <p className="text-[9px] font-black text-slate-400 uppercase leading-none mb-1 truncate">{h.label}</p>
+                           <p className="text-[7.5px] font-bold text-slate-300 uppercase leading-none mb-1">{h.label === 'Morning' ? '06:00 - 11:59' : h.label === 'Afternoon' ? '12:00 - 17:59' : h.label === 'Evening' ? '18:00 - 23:59' : '00:00 - 05:59'}</p>
                            <p className="text-sm font-bold text-slate-900 leading-none">{h.count}</p>
                         </div>
                      </div>
@@ -363,6 +369,9 @@ const AnalyticsView = ({ settings }) => {
           <Globe className="w-6 h-6 text-blue-500" />
         </div>
         <div className={`p-8 ${!settings.is_pro ? 'opacity-30 grayscale-[0.8]' : ''}`}>
+           {(!data.top_locations || data.top_locations.length === 0) ? (
+              <div className="p-16 text-center opacity-40 italic">Awaiting data</div>
+           ) : (
            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
               <div className="lg:col-span-1 space-y-5">
                  <h5 className="vb-label">Top Performing Regions</h5>
@@ -401,6 +410,7 @@ const AnalyticsView = ({ settings }) => {
                  })}
               </div>
            </div>
+           )}
         </div>
       </div>
     </div>

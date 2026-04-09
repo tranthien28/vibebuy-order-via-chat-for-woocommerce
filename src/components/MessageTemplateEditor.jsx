@@ -5,7 +5,9 @@ import { MessageSquare, Hash, Search, RotateCcw } from 'lucide-react';
 const TAGS = {
   '📦 Product': [
     { tag: '{{product_name}}',      desc: 'Name' },
+    { tag: '{{product_id}}',        desc: 'Product ID' },
     { tag: '{{product_price}}',     desc: 'Price' },
+    { tag: '{{product_sale_price}}',desc: 'Sale Price' },
     { tag: '{{product_qty}}',       desc: 'Qty requested' },
     { tag: '{{product_url}}',       desc: 'Link' },
     { tag: '{{product_sku}}',       desc: 'SKU (PRO)' },
@@ -19,9 +21,13 @@ const TAGS = {
     { tag: '{{customer_country}}', desc: 'Country (PRO)' },
     { tag: '{{customer_device}}',  desc: 'Device/OS (PRO)' },
   ],
-  '🏢 Store': [
+  '🏢 Store & Order': [
     { tag: '{{site_name}}',  desc: 'Name' },
     { tag: '{{site_url}}',   desc: 'URL' },
+    { tag: '{{order_id}}',   desc: 'Order ID' },
+    { tag: '{{order_url}}',  desc: 'Order URL' },
+    { tag: '{{order_total}}',desc: 'Order Total' },
+    { tag: '{{message}}',    desc: 'Customer Message' },
   ],
   '💎 Custom Fields (PRO)': [
     { tag: '{{custom_address}}', desc: 'Address (PRO)' },

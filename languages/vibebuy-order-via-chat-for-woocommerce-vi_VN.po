@@ -1,0 +1,107 @@
+# Copyright (C) 2026 Thien Tran
+# This file is distributed under the same license as the VibeBuy Lite package.
+msgid ""
+msgstr ""
+"Project-Id-Version: VibeBuy Lite 1.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/vibebuy-order-via-chat-for-woocommerce\n"
+"Last-Translator: Thien Tran <thien@example.com>\n"
+"Language-Team: Vietnamese <vi@li.org>\n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.0\n"
+"X-Domain: vibebuy-order-via-chat-for-woocommerce\n"
+
+#: inc/class-vibebuy-admin.php:172
+msgid "Your Channels"
+msgstr "Các kênh của bạn"
+
+#: inc/class-vibebuy-admin.php:173
+msgid "Configure each channel independently."
+msgstr "Thiết lập cấu hình cho từng kênh riêng biệt."
+
+#: inc/class-vibebuy-admin.php:174
+msgid "Configure"
+msgstr "Cấu hình"
+
+#: inc/class-vibebuy-admin.php:175
+msgid "Save All Settings"
+msgstr "Lưu tất cả cài đặt"
+
+#: inc/class-vibebuy-admin.php:176
+msgid "Saving..."
+msgstr "Đang lưu..."
+
+#: inc/class-vibebuy-admin.php:177
+msgid "Settings saved!"
+msgstr "Đã lưu cài đặt!"
+
+#: inc/class-vibebuy-admin.php:178
+msgid "Save failed. Please try again."
+msgstr "Lưu thất bại. Vui lòng thử lại."
+
+#: inc/class-vibebuy-admin.php:179
+msgid "Widget ON"
+msgstr "Widget ĐANG BẬT"
+
+#: inc/class-vibebuy-admin.php:180
+msgid "Widget OFF"
+msgstr "Widget ĐANG TẮT"
+
+#: inc/class-vibebuy-admin.php:181
+msgid "Upgrade to Pro →"
+msgstr "Nâng cấp bản Pro →"
+
+#: inc/class-vibebuy-admin.php:182
+msgid "Available in Pro"
+msgstr "Có sẵn trong bản Pro"
+
+#: inc/class-vibebuy-admin.php:183
+msgid "Unlock with VibeBuy Pro"
+msgstr "Mở khóa với VibeBuy Pro"
+
+#: inc/class-vibebuy-admin.php:184
+msgid "PRO"
+msgstr "BẢN PRO"
+
+#: inc/class-vibebuy-admin.php:185
+msgid "Config"
+msgstr "Cấu hình"
+
+#: inc/class-vibebuy-admin.php:186
+msgid "Appearance"
+msgstr "Giao diện"
+
+#: inc/class-vibebuy-admin.php:187
+msgid "Display Rules"
+msgstr "Quy tắc hiển thị"
+
+#: inc/class-vibebuy-admin.php:188
+msgid "← Back"
+msgstr "← Quay lại"
+
+#: inc/class-vibebuy-admin.php:189
+msgid "Next →"
+msgstr "Tiếp tục →"
+
+#: inc/class-vibebuy-admin.php:190
+msgid "Save"
+msgstr "Lưu"
+
+#: inc/class-vibebuy-admin.php:191
+msgid "← Back to Channels"
+msgstr "← Trở về danh sách kênh"
+
+#: inc/integrations/class-vibebuy-wpml.php:41
+msgid "Chat via WhatsApp"
+msgstr "Chat qua WhatsApp"
+
+#: inc/integrations/class-vibebuy-wpml.php:42
+msgid "Chat via Telegram"
+msgstr "Chat qua Telegram"
+
+#: inc/integrations/class-vibebuy-wpml.php:43
+msgid "Order via Messaging"
+msgstr "Đặt hàng qua Messaging"

@@ -88,17 +88,6 @@ const ConfigStep = ({ channel, settings, updateSetting, onNavigate }) => {
         </div>
       </div>
 
-      {/* Pro Features */}
-      <div className="pt-2 border-t border-slate-100">
-        <div className="grid grid-cols-2 gap-3 opacity-60 mt-4">
-          {['Multi-Agent', 'Hours Control', 'AI Assistant', 'Analytics'].map(f => (
-            <div key={f} className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 py-3 bg-slate-50/50">
-              <Lock className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-              <span className="text-[10px] text-slate-400 font-black uppercase tracking-tight">{f}</span>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* 📋 SHORTCODE */}
       <div className="pt-6 border-t border-gray-100">

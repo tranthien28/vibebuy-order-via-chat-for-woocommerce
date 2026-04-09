@@ -61,18 +61,6 @@ const ConfigStep = ({ channel, settings, updateSetting, onNavigate }) => {
         </p>
       </div>
 
-      {/* Pro Features */}
-      <div className="pt-2 border-t border-gray-100">
-        <div className="grid grid-cols-2 gap-2 mt-4 opacity-60 pointer-events-none select-none">
-          {['Bot Avatar', 'Channel Routing', 'Analytics', 'Embed Rich Cards'].map(f => (
-            <div key={f} className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2.5 bg-gray-50">
-              <Lock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
-              <span className="text-xs text-gray-400 font-medium">{f}</span>
-              <span className="ml-auto bg-amber-400 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm">PRO</span>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };

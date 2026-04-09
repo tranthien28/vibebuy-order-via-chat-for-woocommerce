@@ -383,11 +383,11 @@ class VibeBuy_API
 		// PRO: Add additional metadata (Device, OS, Browser, etc.)
 		$data = apply_filters('vibebuy_customer_context', $data, $params);
 
+		// Potentially create a WC order so we can get order details before rendering template
+		$data['order_id'] = $this->maybe_create_wc_order($data);
+
 		// Render template message before notifying
 		$rendered_message = $this->render_template_message($data);
-
-		// NEW: Potentially create a WC order
-		$data['order_id'] = $this->maybe_create_wc_order($data);
 
 		$result = VibeBuy_DB::save_connection($data);
 
@@ -456,6 +456,8 @@ class VibeBuy_API
 			'<site_title>' => get_bloginfo('name'),
 			'{{site_name}}' => get_bloginfo('name'),
 			'{{order_total}}' => $product_price,
+			'{{order_id}}' => !empty($data['order_id']) ? $data['order_id'] : 'N/A',
+			'{{order_url}}' => !empty($data['order_id']) ? admin_url('post.php?post=' . $data['order_id'] . '&action=edit') : 'N/A',
 		);
 
 		// PRO: dynamic SKU and Variations

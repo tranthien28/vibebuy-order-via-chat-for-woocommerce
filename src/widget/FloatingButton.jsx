@@ -189,7 +189,7 @@ const checkVisibility = (settings, productData) => {
     }
 
     const modalEnabled = settings.orderModal_enabled !== false;
-    const allowRepeat = settings.orderModal_allowRepeat === true;
+    const allowRepeat = !!settings.orderModal_allowRepeat && String(settings.orderModal_allowRepeat) !== 'false';
 
     // Standard product/listing context below - use modal if enabled
     if (!modalEnabled || (hasSubmitted && !allowRepeat)) {
@@ -312,7 +312,8 @@ const LeadButton = ({ settings, productData, manualData }) => {
   const bHeight = settings.height || 48;
   const fSize = settings.fontSize || 14;
   
-  const isSubmitted = hasSubmitted;
+  const allowRepeat = !!settings.orderModal_allowRepeat && String(settings.orderModal_allowRepeat) !== 'false';
+  const isSubmitted = hasSubmitted && !allowRepeat;
   const isOutOfStock = productData && productData.is_in_stock === false;
   const bText = isOutOfStock
     ? 'Out of Stock'
@@ -512,10 +513,7 @@ const bootstrapWidget = () => {
   // Listen to WooCommerce variation events on the page
   const variationForm = document.querySelector('.variations_form');
   if (variationForm) {
-    // variation_found: WooCommerce fires this when a valid variation is selected
-    variationForm.addEventListener('found_variation', (e) => {
-      const variation = e.detail || (e.originalEvent && e.originalEvent.detail);
-      // Also works with jQuery CustomEvent
+    const handleFoundVariation = (variation) => {
       const varData = variation || {};
 
       // Match against our preloaded variation data from PHP
@@ -537,18 +535,29 @@ const bootstrapWidget = () => {
       variationForm.querySelectorAll('select').forEach(sel => {
         if (sel.value) {
           const lbl = document.querySelector(`label[for="${sel.id}"]`)?.textContent?.replace(':', '').trim() || '';
-          attrs.push(`${lbl}: ${sel.value}`);
+          const opt = sel.options[sel.selectedIndex]?.textContent?.trim() || sel.value;
+          attrs.push(`${lbl}: ${opt}`);
         }
       });
       updatedProduct.variation = attrs.join(', ');
 
       rerenderAllWithProduct(updatedProduct);
-    });
+    };
 
-    // variation_set: fired after reset (no variation selected)
-    variationForm.addEventListener('reset_data', () => {
+    const handleResetData = () => {
       rerenderAllWithProduct({ ...scrapeWooBaseData(), is_in_stock: product?.is_in_stock, variation_id: 0 });
-    });
+    };
+
+    if (window.jQuery) {
+      window.jQuery(variationForm).on('found_variation', (e, variation) => handleFoundVariation(variation));
+      window.jQuery(variationForm).on('reset_data', handleResetData);
+    } else {
+      variationForm.addEventListener('found_variation', (e) => {
+        const variation = e.detail || (e.originalEvent && e.originalEvent.detail);
+        handleFoundVariation(variation);
+      });
+      variationForm.addEventListener('reset_data', handleResetData);
+    }
   }
 
   // Listen to Quantity changes on the page

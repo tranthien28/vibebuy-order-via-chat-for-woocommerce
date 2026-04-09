@@ -112,7 +112,7 @@ class VibeBuy_Admin
 			'lang' => defined('ICL_LANGUAGE_CODE') ? ICL_LANGUAGE_CODE : '',
 			'isProInstalled' => vibebuy_is_pro_installed(),
 			'isPro' => vibebuy_is_pro(),
-			'logoUrl' => VIBEBUY_PLUGIN_URL . 'assets/images/vibebuy-logo.png',
+			'logoUrl' => VIBEBUY_PLUGIN_URL . 'assets/images/vibebuy-logo.svg',
 			'i18n' => $this->get_i18n_strings(),
 		));
 
